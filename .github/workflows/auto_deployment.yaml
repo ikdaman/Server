@@ -45,7 +45,8 @@ jobs:
           ${{ secrets.AUTHORIZATION }}
           fuser -k {{ secrets.APPLIATION_PORT}}/tcp && cd ${{ secrets.PROJECT_PATH }}
           git fetch && git pull
-          git clone --bare {{ secrets.SECRET_REPOSITORY }}
+          git subomodule update --remote --merge
+          cd ./server-private/src/* ./src/
           ./gradlew clean build -x test
           rm nohup.out
           nohup java -jar {{ secrets.APPLICATION_PATH }} &
