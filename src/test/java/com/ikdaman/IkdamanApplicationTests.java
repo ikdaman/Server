@@ -1,4 +1,4 @@
-package com.example.ikdaman;
+package com.ikdaman;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

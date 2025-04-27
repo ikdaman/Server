@@ -4,7 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.example'
+group = 'com'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -18,12 +18,40 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Spring Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// 데이터 유효성 검증
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+//	// Spring Security
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	// OAuth2 Client
+//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+//	// WebClient
+//	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+//	// JJWT
+//	implementation 'io.jsonwebtoken:jjwt-api:0.11.5' // JJWT API 모듈
+//	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'   // JJWT 구현체
+//	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // JSON 파싱을 위한 Jackson 기반 처리
+
+	// PostgreSQL
+	implementation 'org.postgresql:postgresql'
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// Gson
+	implementation 'com.google.code.gson:gson'
 }
 
 tasks.named('test') {
