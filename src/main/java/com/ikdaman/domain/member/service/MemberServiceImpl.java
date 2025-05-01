@@ -64,7 +64,24 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public MemberRes editMember(UUID memberId, MemberReq memberReq) {
-        MemberRes info = MemberRes.builder().build();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_USER));
+
+        if(!memberReq.getNickname().equals(member.getNickname()) && !checkNickname(memberReq.getNickname())) {
+            throw new BaseException(ErrorCode.CONFLICT_NICKNAME);
+        }
+
+        member.updateNickname(memberReq.getNickname());
+        member.updateBirthdate(memberReq.getBirthdate());
+        member.updateGender(memberReq.getGender());
+
+        memberRepository.save(member);
+
+        MemberRes info = MemberRes.builder()
+                .nickname(member.getNickname())
+                .gender(member.getGender())
+                .birthdate(member.getBirthdate())
+                .build();
         return info;
     }
 }

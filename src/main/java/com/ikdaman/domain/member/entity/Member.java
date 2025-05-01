@@ -77,4 +77,16 @@ public class Member extends BaseTime {
         this.socialType = socialType;
         this.status = status;
     }
+
+    public void updateNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
+
+    public void updateBirthdate(LocalDate newBirthDate) {
+        this.birthdate = newBirthDate;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
 }

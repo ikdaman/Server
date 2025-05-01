@@ -42,7 +42,16 @@ public enum ErrorCode {
 
     // Notice(04)
 
+    /**
+     * 409 Conflict
+     */
+    // Auth(01)
 
+    // Member(02)
+    CONFLICT_NICKNAME(HttpStatus.CONFLICT.value(), 4090201, "사용중인 닉네임입니다."),
+    // MyBook(03)
+
+    // Notice(04)
 
     /**
      * 500 Internal Server Error
