@@ -10,6 +10,11 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
+    /**
+     * 400 BAD_REQUEST
+     */
+    // common(00)
+    BAD_REQUEST_BY_VALIDATION(HttpStatus.BAD_REQUEST.value(), 4000001, "유효하지 않은 값입니다."),
 
     /**
      * 401 Unauthorized
