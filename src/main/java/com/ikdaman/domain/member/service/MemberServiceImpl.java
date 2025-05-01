@@ -48,6 +48,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberRes getMember(UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_USER));
@@ -57,6 +58,13 @@ public class MemberServiceImpl implements MemberService {
                 .birthdate(member.getBirthdate())
                 .gender(member.getGender())
                 .build();
+        return info;
+    }
+
+    @Override
+    @Transactional
+    public MemberRes editMember(UUID memberId, MemberReq memberReq) {
+        MemberRes info = MemberRes.builder().build();
         return info;
     }
 }

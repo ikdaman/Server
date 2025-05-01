@@ -62,4 +62,12 @@ public class MemberController {
         MemberRes result = memberService.getMember(memberId);
         return ResponseEntity.ok(result);
     }
+
+    // 내 정보 수정
+    // TODO: Access Token 처리 방안에 따른 유저 확인 절차 추가
+    @PutMapping("/me")
+    public ResponseEntity editMyInfo(@RequestHeader(name = "Authorization") UUID memberId, @RequestBody MemberReq memberReq) {
+        MemberRes result = memberService.editMember(memberId, memberReq);
+        return ResponseEntity.ok(result);
+    }
 }

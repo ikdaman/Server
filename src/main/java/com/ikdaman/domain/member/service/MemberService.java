@@ -17,4 +17,6 @@ public interface MemberService {
     Boolean checkNickname(String nickname);
 
     MemberRes getMember(UUID memberId);
+
+    MemberRes editMember(UUID memberId, MemberReq memberReq);
 }
