@@ -30,7 +30,7 @@ import java.util.UUID;
 public class Member extends BaseTime {
     @Id
     @GeneratedValue
-    @Column(name = "member_id", nullable = false, updatable = false, columnDefinition = "UUID DEFAULT uuid_generate_v4()")
+    @Column(name = "member_id", nullable = false, updatable = false, columnDefinition = "UUID DEFAULT uuid_generate_v7()")
     private UUID memberId;
 
     @Column(length = 20, nullable = false, unique = true)

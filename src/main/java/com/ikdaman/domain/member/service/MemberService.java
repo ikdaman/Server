@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface MemberService {
     Member createMember(MemberReq dto);
     Optional<Member> findMemberById(UUID memberId);
+
+    Boolean checkNickname(String nickname);
 }

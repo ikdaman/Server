@@ -7,13 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,5 +39,13 @@ public class MemberController {
         Optional<Member> member = memberService.findMemberById(memberId);
         return member.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 닉네임 중복 확인
+    @GetMapping("/check")
+    public ResponseEntity checkNickname(@RequestParam(name="nickname") String nickname) {
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("available", true);
+        return ResponseEntity.ok(result);
     }
 }

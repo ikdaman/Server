@@ -36,4 +36,9 @@ public class MemberServiceImpl implements MemberService {
     public Optional<Member> findMemberById(UUID memberId) {
         return memberRepository.findById(memberId);
     }
+
+    @Override
+    public Boolean checkNickname(String nickname) {
+        return null;
+    }
 }
