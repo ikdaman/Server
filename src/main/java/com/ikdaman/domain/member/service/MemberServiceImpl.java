@@ -38,7 +38,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Boolean checkNickname(String nickname) {
-        return null;
+        return !memberRepository.existsByNickname(nickname);
     }
 }

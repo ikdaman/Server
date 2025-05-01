@@ -3,7 +3,9 @@ package com.ikdaman.domain.member.controller;
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.model.MemberReq;
 import com.ikdaman.domain.member.service.MemberService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -42,10 +44,13 @@ public class MemberController {
     }
 
     // 닉네임 중복 확인
+    // TODO: 닉네임 형식에 대한 Validation (2025.05.01 기준 미정)
     @GetMapping("/check")
-    public ResponseEntity checkNickname(@RequestParam(name="nickname") String nickname) {
+    public ResponseEntity checkNickname(@RequestParam(name="nickname")
+                                        @NotBlank(message = "닉네임은 빈 값일 수 없습니다.")
+                                            String nickname) {
         Map<String, Boolean> result = new HashMap<>();
-        result.put("available", true);
+        result.put("available", memberService.checkNickname(nickname));
         return ResponseEntity.ok(result);
     }
 }
