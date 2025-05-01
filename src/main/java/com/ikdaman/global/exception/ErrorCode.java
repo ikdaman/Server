@@ -36,6 +36,7 @@ public enum ErrorCode {
     INVALID_SOCIAL_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040101,"유효하지 않은 Social Access Token 입니다."),
 
     // Member(02)
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND.value(), 4040201, "존재하지 않는 유저입니다."),
 
     // MyBook(03)
 

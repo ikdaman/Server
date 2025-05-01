@@ -55,9 +55,11 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
+    // 내 정보 조회
+    // TODO: Access Token 처리 방안에 따른 유저 확인 절차 추가
     @GetMapping("/me")
-    public ResponseEntity findMyInfo(@RequestHeader(name = "Authentication") UUID memberId) {
-        MemberRes result = MemberRes.builder().build();
+    public ResponseEntity findMyInfo(@RequestHeader(name = "Authorization") UUID memberId) {
+        MemberRes result = memberService.getMember(memberId);
         return ResponseEntity.ok(result);
     }
 }
