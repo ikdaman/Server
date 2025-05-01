@@ -51,7 +51,7 @@ public class MemberController {
                                         @NotBlank(message = "닉네임은 빈 값일 수 없습니다.")
                                             String nickname) {
         Map<String, Boolean> result = new HashMap<>();
-        result.put("available", memberService.checkNickname(nickname));
+        result.put("available", memberService.isAvailableNickname(nickname));
         return ResponseEntity.ok(result);
     }
 

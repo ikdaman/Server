@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true)
-    public Boolean checkNickname(String nickname) {
+    public Boolean isAvailableNickname(String nickname) {
         return !memberRepository.existsByNickname(nickname);
     }
 
@@ -67,7 +67,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_USER));
 
-        if(!memberReq.getNickname().equals(member.getNickname()) && !checkNickname(memberReq.getNickname())) {
+        if(!memberReq.getNickname().equals(member.getNickname()) && !isAvailableNickname(memberReq.getNickname())) {
             throw new BaseException(ErrorCode.CONFLICT_NICKNAME);
         }
 

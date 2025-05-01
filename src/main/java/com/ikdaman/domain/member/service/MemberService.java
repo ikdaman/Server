@@ -14,7 +14,7 @@ public interface MemberService {
     Member createMember(MemberReq dto);
     Optional<Member> findMemberById(UUID memberId);
 
-    Boolean checkNickname(String nickname);
+    Boolean isAvailableNickname(String nickname);
 
     MemberRes getMember(UUID memberId);
 
