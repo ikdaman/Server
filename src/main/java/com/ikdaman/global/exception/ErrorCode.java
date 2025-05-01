@@ -29,6 +29,7 @@ public enum ErrorCode {
      */
     // Auth(01)
     INVALID_SOCIAL_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040101,"유효하지 않은 Social Access Token 입니다."),
+    INVALID_SOCIAL_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040102,"유효하지 않은 소셜 로그인 제공업체입니다."),
 
     // Member(02)
 
@@ -45,7 +46,10 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000001, "서버 내부 오류가 발생했습니다."),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000002,"데이터베이스 오류가 발생했습니다."),
     NULL_POINTER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000003,"잘못된 값(NULL)이 처리되었습니다."),
-    PERSIST_EXCEPTION_TO_THIRD_PARTY(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000004,"외부 저장소에 저장을 실패했습니다.");
+    PERSIST_EXCEPTION_TO_THIRD_PARTY(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000004,"외부 저장소에 저장을 실패했습니다."),
+
+    // Auth(01)
+    FAILED_GENERATE_APP_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR.value(), 55000101, "ikdaman의 앱 토큰 생성에 실패했습니다.");
 
     private final int status;
     private final int code;

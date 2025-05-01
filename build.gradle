@@ -34,16 +34,16 @@ dependencies {
 	// 데이터 유효성 검증
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-//	// Spring Security
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-//	// OAuth2 Client
-//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-//	// WebClient
-//	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-//	// JJWT
-//	implementation 'io.jsonwebtoken:jjwt-api:0.11.5' // JJWT API 모듈
-//	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'   // JJWT 구현체
-//	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // JSON 파싱을 위한 Jackson 기반 처리
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// OAuth2 Client
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	// WebClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// JJWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	// PostgreSQL
 	implementation 'org.postgresql:postgresql'
@@ -52,6 +52,9 @@ dependencies {
 
 	// Gson
 	implementation 'com.google.code.gson:gson'
+	
+	// Apache Commons Lang
+//	implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 tasks.named('test') {
