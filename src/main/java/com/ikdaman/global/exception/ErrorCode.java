@@ -10,6 +10,11 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
+    /**
+     * 400 BAD_REQUEST
+     */
+    // common(00)
+    BAD_REQUEST_BY_VALIDATION(HttpStatus.BAD_REQUEST.value(), 4000001, "유효하지 않은 값입니다."),
 
     /**
      * 401 Unauthorized
@@ -31,12 +36,22 @@ public enum ErrorCode {
     INVALID_SOCIAL_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040101,"유효하지 않은 Social Access Token 입니다."),
 
     // Member(02)
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND.value(), 4040201, "존재하지 않는 유저입니다."),
 
     // MyBook(03)
 
     // Notice(04)
 
+    /**
+     * 409 Conflict
+     */
+    // Auth(01)
 
+    // Member(02)
+    CONFLICT_NICKNAME(HttpStatus.CONFLICT.value(), 4090201, "사용중인 닉네임입니다."),
+    // MyBook(03)
+
+    // Notice(04)
 
     /**
      * 500 Internal Server Error

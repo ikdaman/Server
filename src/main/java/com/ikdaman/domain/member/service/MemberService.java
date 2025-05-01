@@ -2,6 +2,7 @@ package com.ikdaman.domain.member.service;
 
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.model.MemberReq;
+import com.ikdaman.domain.member.model.MemberRes;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,4 +13,10 @@ import java.util.UUID;
 public interface MemberService {
     Member createMember(MemberReq dto);
     Optional<Member> findMemberById(UUID memberId);
+
+    Boolean isAvailableNickname(String nickname);
+
+    MemberRes getMember(UUID memberId);
+
+    MemberRes editMember(UUID memberId, MemberReq memberReq);
 }

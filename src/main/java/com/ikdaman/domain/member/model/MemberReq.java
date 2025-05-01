@@ -14,6 +14,7 @@ import java.time.LocalDate;
 /**
  * 회원 요청 DTO
  */
+// TODO: Validation 확인
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberReq {

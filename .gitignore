@@ -38,3 +38,6 @@ out/
 
 ### secret ###
 **/src/main/resources/*.yml
+**/src/main/resources/*.pem
+**/src/main/**/config/
+**/server-private
