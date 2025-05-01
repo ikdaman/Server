@@ -11,13 +11,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuthRes {
-    // TODO: apptoken 헤더로 분리
-    private String appToken;
+    private String accessToekn;    // App의 AccessToken
+    private String refreshToken;    // RefreshToken
     private String nickname;
 
     @Builder
-    public AuthRes(String appToken, String nickname) {
-        this.appToken = appToken;
+    public AuthRes(String accessToekn, String refreshToken, String nickname) {
+        this.accessToekn = accessToekn;
+        this.refreshToken = refreshToken;
         this.nickname = nickname;
     }
 }

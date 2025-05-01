@@ -2,9 +2,12 @@ package com.ikdaman.domain.auth.controller;
 
 import com.ikdaman.domain.auth.model.AuthReq;
 import com.ikdaman.domain.auth.model.AuthRes;
+import com.ikdaman.domain.auth.service.AuthService;
 import com.ikdaman.domain.auth.service.SocialLoginService;
+import com.ikdaman.global.auth.payload.Tokens;
 import com.ikdaman.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,7 @@ import static com.ikdaman.global.exception.ErrorCode.INVALID_SOCIAL_PROVIDER;
 public class AuthController {
 
     private final Map<String, SocialLoginService> socialLoginServices;
+    private final AuthService authService;
 
     /**
      * 소셜 로그인
@@ -26,9 +30,8 @@ public class AuthController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthRes> socialLogin(
-            @RequestBody AuthReq dto,
-            @RequestHeader("social-access-token") String socialToken) {
+    public ResponseEntity<AuthRes> socialLogin(@RequestBody AuthReq dto,
+                                               @RequestHeader("social-access-token") String socialToken) {
 
         String provider = dto.getProvider().toLowerCase();
         SocialLoginService loginService = socialLoginServices.get(provider);
@@ -37,6 +40,38 @@ public class AuthController {
         }
 
         AuthRes res = loginService.login(dto, socialToken);
-        return ResponseEntity.ok(res);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", res.getAccessToekn());
+        headers.add("refresh-token", res.getRefreshToken());
+
+        res = AuthRes.builder()
+                .nickname(res.getNickname())
+                .build();
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(res);
+    }
+
+    /**
+     * Access Token 재발급
+     * @param accessToken
+     * @param refreshToken
+     * @return
+     */
+    @PostMapping("/reissue")
+    public ResponseEntity reissueToken(@RequestHeader("Authorization") String accessToken,
+                                   @RequestHeader("refresh-token") String refreshToken) {
+
+        Tokens tokens = authService.reissueToken(accessToken, refreshToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", tokens.getAccessToken());
+        headers.add("refresh-token", tokens.getRefreshToken());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .build();
     }
 } 

@@ -13,16 +13,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthTokenProvider tokenProvider;
 
+    private static final List<String> NO_CHECK_URLS = List.of(
+            "/auth/login",
+            "/auth/reissue"
+    );
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.equals("/auth/login"); // 로그인은 토큰 검사 제외
+        return NO_CHECK_URLS.contains(path);  // 토큰 검사 제외
     }
 
     @Override

@@ -25,7 +25,10 @@ import static com.ikdaman.global.exception.ErrorCode.FAILED_GENERATE_APP_TOKEN;
 @Component
 public class AuthTokenProvider {
     @Value("${auth.access-token-validity}")
-    private String expiry; // token 만료일
+    private String accessExpiry; // AccessToken 만료일
+
+    @Value("${auth.refresh-token-validity}")
+    private String refreshExpiry; // RefreshToken 만료일
 
     private final Key key;
     private static final String AUTHORITIES_KEY = "role"; // getAuthentication에서 사용자 권한 체크 위해
@@ -44,7 +47,12 @@ public class AuthTokenProvider {
 
     // USER에 대한 AccessToken(여기선 appToken) 생성
     public AuthToken createUserAppToken(String id) {
-        return createToken(id, RoleType.USER, expiry);
+        return createToken(id, RoleType.USER, accessExpiry);
+    }
+
+    // RefreshToken 생성
+    public AuthToken createRefreshToken(String id) {
+        return createToken(id, RoleType.USER, refreshExpiry);
     }
 
     // String to AuthToken
@@ -56,7 +64,6 @@ public class AuthTokenProvider {
     public static Date getExpiryDate(String expiry) {
         return new Date(System.currentTimeMillis() + Long.parseLong(expiry));
     }
-
 
     public Authentication getAuthentication(AuthToken authToken) {
 

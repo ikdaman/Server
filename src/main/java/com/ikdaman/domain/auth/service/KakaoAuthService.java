@@ -8,8 +8,10 @@ import com.ikdaman.global.auth.client.ClientKakao;
 import com.ikdaman.global.auth.token.AuthToken;
 import com.ikdaman.global.auth.token.AuthTokenProvider;
 import com.ikdaman.global.exception.BaseException;
+import com.ikdaman.global.util.RedisService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import static com.ikdaman.global.exception.ErrorCode.INVALID_SOCIAL_ACCESS_TOKEN;
@@ -21,6 +23,10 @@ public class KakaoAuthService implements SocialLoginService {
     private final ClientKakao clientKakao;
     private final AuthTokenProvider authTokenProvider;
     private final MemberRepository memberRepository;
+    private final RedisService redisService;
+
+    @Value("${auth.refresh-token-validity}")
+    private long refreshExpiry; // RefreshToken 만료일
 
     @Override
     @Transactional
@@ -32,11 +38,7 @@ public class KakaoAuthService implements SocialLoginService {
         // 2. 요청으로 들어온 providerId와 비교해서 검증
         if (!dto.getProviderId().equals(checkProviderId)) throw new BaseException(INVALID_SOCIAL_ACCESS_TOKEN);
 
-        // 3. 신규 토큰 생성
-        AuthToken appToken = authTokenProvider.createUserAppToken(checkProviderId);
-        // TODO: 신규 토큰
-
-        // 4. 기존 회원 조회
+        // 3. 기존 회원 조회
         Member member = memberRepository.findBySocialTypeAndProviderId(Member.SocialType.KAKAO, checkProviderId)
                 .orElseGet(() -> {
                     // TODO: 랜덤 닉네임 생성
@@ -51,9 +53,14 @@ public class KakaoAuthService implements SocialLoginService {
                     return memberRepository.save(newMember);
                 });
 
-        // 카카오 토큰 검증, 사용자 정보 가져오기 로직 작성
+        // 3. 신규 토큰 생성 및 저장
+        AuthToken accessToken = authTokenProvider.createUserAppToken(String.valueOf(member.getMemberId()));
+        AuthToken refreshToken = authTokenProvider.createRefreshToken(String.valueOf(member.getMemberId()));
+        redisService.setValuesWithTimeout(String.valueOf(member.getMemberId()), refreshToken.getToken(), refreshExpiry);
+
         return AuthRes.builder()
-                .appToken(appToken.getToken())
+                .accessToekn(accessToken.getToken())
+                .refreshToken(refreshToken.getToken())
                 .nickname(member.getNickname())
                 .build();
     }

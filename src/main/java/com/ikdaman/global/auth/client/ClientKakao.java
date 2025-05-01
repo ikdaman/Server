@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import static com.ikdaman.global.exception.ErrorCode.FAILED_GENERATE_APP_TOKEN;
+import static com.ikdaman.global.exception.ErrorCode.INVALID_SOCIAL_ACCESS_TOKEN;
+import static com.ikdaman.global.exception.ErrorCode.KAKAO_SERVER_ERROR;
 
 @Component
 @RequiredArgsConstructor
@@ -16,17 +17,18 @@ public class ClientKakao {
 
     private final WebClient webClient;
 
+    // TODO: HttpHeaders.AUTHORIZATION 사용하도록 변경
     public String getUserData(String accessToken) {
         KakaoUserRes kakaoUserRes = webClient.get()
                 .uri("https://kapi.kakao.com/v2/user/me") // Kakao의 유저 정보 받아오는 url
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-//                .headers(h -> h.setBearerAuth(accessToken)) // JWT 토큰을 Bearer 토큰으로 지정
+//                .headers(h -> h.setBearerAuth("U-" + accessToken)) // 임시로 발급받은 사용자 토큰으로 접근
                 .retrieve()
                 // onStatus <- error handling
                 .onStatus(status -> status.is4xxClientError(), response
-                        -> Mono.error(new BaseException(FAILED_GENERATE_APP_TOKEN)))
+                        -> Mono.error(new BaseException(INVALID_SOCIAL_ACCESS_TOKEN)))
                 .onStatus(status -> status.is5xxServerError(), response
-                        -> Mono.error(new BaseException(FAILED_GENERATE_APP_TOKEN)))
+                        -> Mono.error(new BaseException(KAKAO_SERVER_ERROR)))
                 .bodyToMono(KakaoUserRes.class) // Kakao의 유저 정보를 넣을 DTO 클래스
                 .block();
 

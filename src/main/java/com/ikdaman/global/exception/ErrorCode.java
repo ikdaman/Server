@@ -28,8 +28,10 @@ public enum ErrorCode {
      * 404 Not found
      */
     // Auth(01)
-    INVALID_SOCIAL_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040101,"유효하지 않은 Social Access Token 입니다."),
-    INVALID_SOCIAL_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040102,"유효하지 않은 소셜 로그인 제공업체입니다."),
+    INVALID_SOCIAL_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040101,"Social Access Token이 유효하지 않습니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040102,"Access Token이 유효하지 않습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.NOT_FOUND.value(), 4040103,"Refresh Token이 유효하지 않습니다."),
+    INVALID_SOCIAL_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040104,"유효하지 않은 소셜 로그인 제공업체입니다."),
 
     // Member(02)
 
@@ -49,7 +51,9 @@ public enum ErrorCode {
     PERSIST_EXCEPTION_TO_THIRD_PARTY(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000004,"외부 저장소에 저장을 실패했습니다."),
 
     // Auth(01)
-    FAILED_GENERATE_APP_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR.value(), 55000101, "ikdaman의 앱 토큰 생성에 실패했습니다.");
+    FAILED_GENERATE_APP_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000101, "ikdaman의 앱 토큰 생성에 실패했습니다."),
+    KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000102, "카카오 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+    ;
 
     private final int status;
     private final int code;
