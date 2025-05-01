@@ -2,6 +2,7 @@ package com.ikdaman.domain.member.controller;
 
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.model.MemberReq;
+import com.ikdaman.domain.member.model.MemberRes;
 import com.ikdaman.domain.member.service.MemberService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,12 @@ public class MemberController {
                                             String nickname) {
         Map<String, Boolean> result = new HashMap<>();
         result.put("available", memberService.checkNickname(nickname));
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity findMyInfo(@RequestHeader(name = "Authentication") UUID memberId) {
+        MemberRes result = MemberRes.builder().build();
         return ResponseEntity.ok(result);
     }
 }

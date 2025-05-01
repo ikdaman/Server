@@ -2,6 +2,7 @@ package com.ikdaman.domain.member.service;
 
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.model.MemberReq;
+import com.ikdaman.domain.member.model.MemberRes;
 import com.ikdaman.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     public Boolean checkNickname(String nickname) {
         return !memberRepository.existsByNickname(nickname);
+    }
+
+    @Override
+    public MemberRes getMember(UUID memberId) {
+        MemberRes info = MemberRes.builder().build();
+        return info;
     }
 }
