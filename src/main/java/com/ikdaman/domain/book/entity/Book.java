@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,8 +41,11 @@ public class Book extends BaseTime {
     @Column(name = "category_id")
     private int categoryId;
 
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    private List<Author> author;
+
     @Builder
-    public Book(int bookId, String title, String publisher, String isbn, int page, String coverImage, int categoryId) {
+    public Book(int bookId, String title, String publisher, String isbn, int page, String coverImage, int categoryId, List<Author> author) {
         this.bookId = bookId;
         this.title = title;
         this.publisher = publisher;
@@ -48,5 +53,6 @@ public class Book extends BaseTime {
         this.page = page;
         this.coverImage = coverImage;
         this.categoryId = categoryId;
+        this.author = author;
     }
 }
