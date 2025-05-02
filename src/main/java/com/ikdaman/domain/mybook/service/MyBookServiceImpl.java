@@ -11,6 +11,8 @@ import com.ikdaman.domain.book.repository.AuthorRepository;
 import com.ikdaman.domain.book.repository.BookRepository;
 import com.ikdaman.domain.mybook.repository.MyBookRepository;
 import com.ikdaman.domain.book.repository.WriterRepository;
+import com.ikdaman.global.exception.BaseException;
+import com.ikdaman.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -158,4 +160,11 @@ public class MyBookServiceImpl implements MyBookService {
                 .build();
     }
 
+    public void deleteMyBook(Integer id) {
+        MyBook myBook = myBookRepository.findById(Long.valueOf(id))
+                .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_BOOK));
+
+        myBook.updateToInactive();
+        myBookRepository.save(myBook);
+    }
 }

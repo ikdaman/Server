@@ -4,6 +4,7 @@ import com.ikdaman.domain.mybook.model.*;
 ;
 import com.ikdaman.domain.mybook.service.MyBookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,13 @@ public class MyBookController {
             // @RequestHeader("nickname") String nickname // 임시 인증 방식
     ) {
         MyBookRes myBookRes = myBookService.addMyBook(dto);
-        return ResponseEntity.ok(myBookRes);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/{mybook_id}")
+    public ResponseEntity<Void> deleteMyBook(@PathVariable Integer mybook_id) {
+        myBookService.deleteMyBook(mybook_id);
+        return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
     }
 
     @GetMapping()
