@@ -1,5 +1,6 @@
 package com.ikdaman.domain.mybook.service;
 
+import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.mybook.model.*;
 
 /**
@@ -13,4 +14,8 @@ public interface MyBookService {
     MyBookSearchRes searchMyBooks(MyBookSearchReq request);
 
     InProgressBooksRes searchInProgressBooks();
+
+    MyBookDetailRes getMyBookDetail(Long mybookId);
+
+    BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit);
 }

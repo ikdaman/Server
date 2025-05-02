@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,7 +38,7 @@ public class BookLog extends BaseTime {
 
     private Integer page; // 읽은 페이지
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content; // 기록 내용
 
     @Builder
