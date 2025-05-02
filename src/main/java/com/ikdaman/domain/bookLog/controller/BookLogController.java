@@ -3,11 +3,16 @@ package com.ikdaman.domain.bookLog.controller;
 import com.ikdaman.domain.bookLog.model.BookLogReq;
 import com.ikdaman.domain.bookLog.model.CompletedReq;
 import com.ikdaman.domain.bookLog.model.UpdateBookLogReq;
-import com.ikdaman.domain.bookLog.model.UpdateCompletedReq;
 import com.ikdaman.domain.bookLog.service.BookLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/mybooks/{mybook_id}")

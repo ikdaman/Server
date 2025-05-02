@@ -1,7 +1,10 @@
 package com.ikdaman.domain.bookLog.service;
 
 import com.ikdaman.domain.bookLog.entity.BookLog;
-import com.ikdaman.domain.bookLog.model.*;
+import com.ikdaman.domain.bookLog.model.BookLogReq;
+import com.ikdaman.domain.bookLog.model.BookLogType;
+import com.ikdaman.domain.bookLog.model.CompletedReq;
+import com.ikdaman.domain.bookLog.model.UpdateBookLogReq;
 import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.mybook.entity.MyBook;
 import com.ikdaman.domain.mybook.repository.MyBookRepository;

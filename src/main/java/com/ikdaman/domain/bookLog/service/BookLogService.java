@@ -4,7 +4,6 @@ import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.bookLog.model.BookLogReq;
 import com.ikdaman.domain.bookLog.model.CompletedReq;
 import com.ikdaman.domain.bookLog.model.UpdateBookLogReq;
-import com.ikdaman.domain.bookLog.model.UpdateCompletedReq;
 
 public interface BookLogService {
     BookLog addBookLog(Long myBookId, BookLogReq request);
