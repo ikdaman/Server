@@ -14,20 +14,20 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
 
     @Query("""
         SELECT m FROM MyBook m
-        JOIN m.book b
-        JOIN b.author a
-        JOIN a.writer w
+        LEFT JOIN m.book b
+        LEFT JOIN b.author a
+        LEFT JOIN a.writer w
         WHERE m.memberId = :memberId
-          AND (
+        AND (
             :status IS NULL OR 
             (:status = 'completed' AND m.isReading = false) OR 
             (:status = 'in-progress' AND m.isReading = true)
-          )
-          AND (
+        )
+        AND (
             :keyword IS NULL OR 
             b.title LIKE :keyword OR 
             w.writerName LIKE :keyword
-          )
+        )
     """)
     Page<MyBook> searchMyBooks(
             @Param("memberId") UUID memberId,
