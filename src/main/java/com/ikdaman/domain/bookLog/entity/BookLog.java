@@ -3,10 +3,7 @@ package com.ikdaman.domain.bookLog.entity;
 import com.ikdaman.domain.mybook.entity.MyBook;
 import com.ikdaman.global.common.BaseTime;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -17,7 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 @DynamicUpdate
-public class BookLog extends BaseTime  {
+@Setter
+public class BookLog extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long booklogId;

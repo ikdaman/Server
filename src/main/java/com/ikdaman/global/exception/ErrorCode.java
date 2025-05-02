@@ -33,6 +33,7 @@ public enum ErrorCode {
     // Member(02)
 
     // MyBook(03)
+    NOT_FOUND_MY_BOOK(HttpStatus.NOT_FOUND.value(), 4040301,"해당 MyBook을 찾을 수 없습니다."),
 
     // Notice(04)
 
