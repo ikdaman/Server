@@ -19,4 +19,6 @@ public interface MemberService {
     MemberRes getMember(UUID memberId);
 
     MemberRes editMember(UUID memberId, MemberReq memberReq);
+
+    void withdrawMember(Member member);
 }

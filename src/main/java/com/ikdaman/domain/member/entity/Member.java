@@ -94,4 +94,12 @@ public class Member extends BaseTime {
     public void updateGender(Gender gender) {
         this.gender = gender;
     }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void updateProviderId(String providerId) {
+        this.providerId = providerId;
+    }
 }

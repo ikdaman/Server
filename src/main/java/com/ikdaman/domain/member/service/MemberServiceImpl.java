@@ -1,5 +1,6 @@
 package com.ikdaman.domain.member.service;
 
+import com.ikdaman.domain.auth.service.AuthService;
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.model.MemberReq;
 import com.ikdaman.domain.member.model.MemberRes;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-
 /**
  * 회원 서비스 구현체
  */
@@ -22,6 +22,7 @@ import java.util.UUID;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final AuthService authService;
 
     @Override
     @Transactional
@@ -83,5 +84,15 @@ public class MemberServiceImpl implements MemberService {
                 .birthdate(member.getBirthdate())
                 .build();
         return info;
+    }
+
+    @Override
+    @Transactional
+    public void withdrawMember(Member member) {
+        authService.logout(member.getMemberId());
+
+        member.updateStatus(Member.Status.INACTIVE);
+        member.updateProviderId("");
+        memberRepository.save(member);
     }
 }

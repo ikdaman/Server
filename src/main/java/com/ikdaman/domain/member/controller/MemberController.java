@@ -5,7 +5,6 @@ import com.ikdaman.domain.member.model.MemberReq;
 import com.ikdaman.domain.member.model.MemberRes;
 import com.ikdaman.domain.member.service.MemberService;
 import com.ikdaman.global.auth.model.AuthMember;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -75,10 +74,9 @@ public class MemberController {
 
     // 회원 탈퇴
     @DeleteMapping("/me")
-    public ResponseEntity signout(HttpServletRequest request) {
-        UUID memberId = (UUID) request.getAttribute("memberId");
-        memberService.withdrawMember(memberId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+    public ResponseEntity signout(@AuthenticationPrincipal AuthMember authMember) {
+        memberService.withdrawMember(authMember.getMember());
+        return ResponseEntity.status(HttpStatus.RESET_CONTENT)
                 .build();
     }
 }
