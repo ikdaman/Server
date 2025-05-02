@@ -1,7 +1,7 @@
 package com.ikdaman.domain.mybook.controller;
 
-import com.ikdaman.domain.mybook.model.MyBookReq;;
-import com.ikdaman.domain.mybook.model.MyBookRes;
+import com.ikdaman.domain.mybook.model.*;
+;
 import com.ikdaman.domain.mybook.service.MyBookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,5 +30,17 @@ public class MyBookController {
         myBookService.deleteMyBook(mybook_id);
         return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
     }
+
+    @GetMapping()
+    public MyBookSearchRes searchMyBooks(@ModelAttribute MyBookSearchReq request) {
+        return myBookService.searchMyBooks(request);
+    }
+
+    // 독서중인 책 목록 조회
+    @GetMapping("/in-progress")
+    public InProgressBooksRes searchInProgressBooks() {
+        return myBookService.searchInProgressBooks();
+    }
+
 }
 

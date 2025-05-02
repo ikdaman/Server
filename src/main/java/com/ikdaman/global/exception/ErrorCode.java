@@ -51,6 +51,7 @@ public enum ErrorCode {
     // Member(02)
     CONFLICT_NICKNAME(HttpStatus.CONFLICT.value(), 4090201, "사용중인 닉네임입니다."),
     // MyBook(03)
+    NOT_FOUND_MY_BOOK(HttpStatus.NOT_FOUND.value(), 4040301,"해당 MyBook을 찾을 수 없습니다."),
 
     // Notice(04)
 
