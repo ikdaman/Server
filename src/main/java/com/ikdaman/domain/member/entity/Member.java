@@ -33,7 +33,8 @@ public class Member extends BaseTime {
     @Column(name = "member_id", nullable = false, updatable = false, columnDefinition = "UUID DEFAULT uuid_generate_v7()")
     private UUID memberId;
 
-    @Column(length = 20, nullable = false, unique = true)
+    // TODO: NOT NULL, RANDOM GENERATE
+    @Column(length = 20, nullable = true, unique = true)
     @Size(min=1, max=20)
     private String nickname;
 
@@ -45,8 +46,11 @@ public class Member extends BaseTime {
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "social_type")
+    @Column(name = "social_type", nullable = false)
     private SocialType socialType;
+
+    @Column(name = "provider_id", nullable = false, unique = true)
+    private String providerId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -69,12 +73,13 @@ public class Member extends BaseTime {
     }
 
     @Builder
-    public Member(UUID memberId, String nickname, LocalDate birthdate, Gender gender, SocialType socialType, Status status) {
+    public Member(UUID memberId, String nickname, LocalDate birthdate, Gender gender, SocialType socialType, String providerId, Status status) {
         this.memberId = memberId;
         this.nickname = nickname;
         this.birthdate = birthdate;
         this.gender = gender;
         this.socialType = socialType;
+        this.providerId = providerId;
         this.status = status;
     }
 
