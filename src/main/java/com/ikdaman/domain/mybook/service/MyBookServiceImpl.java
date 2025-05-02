@@ -1,5 +1,6 @@
 package com.ikdaman.domain.mybook.service;
 
+import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.repository.MemberRepository;
 import com.ikdaman.domain.bookLog.repository.BookLogRepository;
@@ -18,6 +19,8 @@ import com.ikdaman.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -165,10 +168,11 @@ public class MyBookServiceImpl implements MyBookService {
                 .build();
     }
 
+    // 나의 책 정보 조회
     @Override
     @Transactional(readOnly = true)
-    public MyBookDetailRes searchMyBookDetail(Integer mybookId) {
-        MyBook myBook = myBookRepository.findById(Long.valueOf(mybookId))
+    public MyBookDetailRes getMyBookDetail(Long mybookId) {
+        MyBook myBook = myBookRepository.findById(mybookId)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
         Book book = myBook.getBook();
 
@@ -201,6 +205,25 @@ public class MyBookServiceImpl implements MyBookService {
                 .progress(calculateProgress(myBook.getNowPage(), book.getPage()))
                 .impression(impression)
                 .build();
+    }
+
+    // 나의 책 기록 조회
+    @Override
+    @Transactional(readOnly = true)
+    public BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<BookLog> resultPage = bookLogRepository.findByMyBook_MybookId(mybookId, pageable);
+
+        List<BookLogListRes.BookLogDTO> booklogs = resultPage.getContent().stream()
+                .map(log -> new BookLogListRes.BookLogDTO(
+                        log.getBooklogId(),
+                        log.getCreatedAt().toString(),
+                        log.getPage(),
+                        log.getContent(),
+                        log.getBooklogType()
+                )).toList();
+
+        return new BookLogListRes(booklogs, resultPage.hasNext());
     }
 
     public void deleteMyBook(Integer id) {
