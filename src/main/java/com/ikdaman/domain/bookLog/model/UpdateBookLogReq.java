@@ -1,4 +1,4 @@
-package com.ikdaman.domain.bookLog.entity;
+package com.ikdaman.domain.bookLog.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;
