@@ -90,7 +90,7 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     public MyBookSearchRes searchMyBooks(MyBookSearchReq request) {
         int page = request.getPage() - 1; // PageRequest는 0부터 시작
-        int limit = request.getLimit();
+        int limit = request.getLimit() + 1;
 
         PageRequest pageRequest = PageRequest.of(page, limit);
         //UUID memberId = request.getMemberId();
