@@ -6,12 +6,15 @@ import com.ikdaman.domain.auth.service.AuthService;
 import com.ikdaman.domain.auth.service.OAuthService;
 import com.ikdaman.global.auth.payload.Tokens;
 import com.ikdaman.global.exception.BaseException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static com.ikdaman.global.exception.ErrorCode.INVALID_SOCIAL_PROVIDER;
 
@@ -62,7 +65,7 @@ public class AuthController {
      */
     @PostMapping("/reissue")
     public ResponseEntity reissueToken(@RequestHeader("Authorization") String accessToken,
-                                   @RequestHeader("refresh-token") String refreshToken) {
+                                       @RequestHeader("refresh-token") String refreshToken) {
 
         Tokens tokens = authService.reissueToken(accessToken, refreshToken);
 
@@ -72,6 +75,20 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .headers(headers)
+                .build();
+    }
+
+    /**
+     * 로그아웃
+     * @param request
+     * @return
+     */
+    @DeleteMapping("/logout")
+    public ResponseEntity logout(HttpServletRequest request) {
+        UUID memberId = (UUID) request.getAttribute("memberId");
+        authService.logout(memberId);
+
+        return ResponseEntity.status(HttpStatus.RESET_CONTENT)
                 .build();
     }
 } 
