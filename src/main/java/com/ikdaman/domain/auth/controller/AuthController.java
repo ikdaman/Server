@@ -3,7 +3,7 @@ package com.ikdaman.domain.auth.controller;
 import com.ikdaman.domain.auth.model.AuthReq;
 import com.ikdaman.domain.auth.model.AuthRes;
 import com.ikdaman.domain.auth.service.AuthService;
-import com.ikdaman.domain.auth.service.SocialLoginService;
+import com.ikdaman.domain.auth.service.OAuthService;
 import com.ikdaman.global.auth.payload.Tokens;
 import com.ikdaman.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import static com.ikdaman.global.exception.ErrorCode.INVALID_SOCIAL_PROVIDER;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final Map<String, SocialLoginService> socialLoginServices;
+    private final Map<String, OAuthService> socialLoginServices;
     private final AuthService authService;
 
     /**
@@ -34,12 +34,12 @@ public class AuthController {
                                                @RequestHeader("social-access-token") String socialToken) {
 
         String provider = dto.getProvider().toLowerCase();
-        SocialLoginService loginService = socialLoginServices.get(provider);
-        if (loginService == null) {
+        OAuthService oAuthService = socialLoginServices.get(provider);
+        if (oAuthService == null) {
             throw new BaseException(INVALID_SOCIAL_PROVIDER);
         }
 
-        AuthRes res = loginService.login(dto, socialToken);
+        AuthRes res = oAuthService.login(dto, socialToken);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", res.getAccessToekn());

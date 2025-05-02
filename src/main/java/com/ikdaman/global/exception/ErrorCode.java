@@ -32,6 +32,7 @@ public enum ErrorCode {
     INVALID_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040102,"Access Token이 유효하지 않습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.NOT_FOUND.value(), 4040103,"Refresh Token이 유효하지 않습니다."),
     INVALID_SOCIAL_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040104,"유효하지 않은 소셜 로그인 제공업체입니다."),
+    NOT_MATCH_TOKEN_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040101,"Social Access Token과 Provider Id가 매칭되지 않습니다."),
 
     // Member(02)
 
@@ -52,7 +53,10 @@ public enum ErrorCode {
 
     // Auth(01)
     FAILED_GENERATE_APP_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000101, "ikdaman의 앱 토큰 생성에 실패했습니다."),
-    KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000102, "카카오 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+    KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000102, "카카오 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."),
+    GOOGLE_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000103, "구글 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."),
+    NAVER_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000104, "네이버 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."),
+    APPLE_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 5000105, "애플 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
     ;
 
     private final int status;
