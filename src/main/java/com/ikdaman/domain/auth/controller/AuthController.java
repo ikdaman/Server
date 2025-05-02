@@ -4,7 +4,7 @@ import com.ikdaman.domain.auth.model.AuthReq;
 import com.ikdaman.domain.auth.model.AuthRes;
 import com.ikdaman.domain.auth.service.AuthService;
 import com.ikdaman.domain.auth.service.OAuthService;
-import com.ikdaman.global.auth.payload.Tokens;
+import com.ikdaman.global.auth.model.Tokens;
 import com.ikdaman.global.exception.BaseException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -91,4 +91,4 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.RESET_CONTENT)
                 .build();
     }
-} 
+}

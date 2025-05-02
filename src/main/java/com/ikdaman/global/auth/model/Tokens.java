@@ -1,4 +1,4 @@
-package com.ikdaman.global.auth.payload;
+package com.ikdaman.global.auth.model;
 
 import lombok.AccessLevel;
 import lombok.Builder;

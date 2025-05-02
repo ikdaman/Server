@@ -1,6 +1,7 @@
 package com.ikdaman.global.auth.token;
 
 import com.ikdaman.global.auth.enumerate.RoleType;
+import com.ikdaman.global.auth.service.MemberDetailsService;
 import com.ikdaman.global.exception.BaseException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
@@ -10,7 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -33,9 +34,12 @@ public class AuthTokenProvider {
     private final Key key;
     private static final String AUTHORITIES_KEY = "role"; // getAuthentication에서 사용자 권한 체크 위해
 
+    private final MemberDetailsService memberDetailsService;
+
     //생성자
-    public AuthTokenProvider(@Value("${auth.tokenSecret}") String secretKey) {
+    public AuthTokenProvider(@Value("${auth.tokenSecret}") String secretKey, MemberDetailsService memberDetailsService) {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        this.memberDetailsService = memberDetailsService;
     }
 
     // 추후 roleType 추가 시 interface 역할 하기 위해 생성
@@ -76,9 +80,8 @@ public class AuthTokenProvider {
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-            User principal = new User(claims.getSubject(), "", authorities);
-            // 사실상 principal에 저장되는 값은 socialId값과 role뿐 (소셜 로그인만 사용하여 password는 저장하지 않아 ""로 넣음)
-            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+            UserDetails member = memberDetailsService.loadUserByUsername(claims.getSubject());
+            return new UsernamePasswordAuthenticationToken(member, authToken, authorities);
         } else {
             throw new BaseException(FAILED_GENERATE_APP_TOKEN);
         }

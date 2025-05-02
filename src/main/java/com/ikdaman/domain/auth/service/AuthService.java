@@ -1,6 +1,6 @@
 package com.ikdaman.domain.auth.service;
 
-import com.ikdaman.global.auth.payload.Tokens;
+import com.ikdaman.global.auth.model.Tokens;
 import com.ikdaman.global.auth.token.AuthToken;
 import com.ikdaman.global.auth.token.AuthTokenProvider;
 import com.ikdaman.global.exception.BaseException;

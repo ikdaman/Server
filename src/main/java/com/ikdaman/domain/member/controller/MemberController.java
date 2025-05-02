@@ -4,12 +4,14 @@ import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.model.MemberReq;
 import com.ikdaman.domain.member.model.MemberRes;
 import com.ikdaman.domain.member.service.MemberService;
+import com.ikdaman.global.auth.model.AuthMember;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,17 +60,25 @@ public class MemberController {
 
     // 내 정보 조회
     @GetMapping("/me")
-    public ResponseEntity findMyInfo(HttpServletRequest request) {
-        UUID memberId = (UUID) request.getAttribute("memberId");
-        MemberRes result = memberService.getMember(memberId);
+    public ResponseEntity findMyInfo(@AuthenticationPrincipal AuthMember authMember) {
+        MemberRes result = memberService.getMember(authMember.getMember().getMemberId());
         return ResponseEntity.ok(result);
     }
 
     // 내 정보 수정
     @PutMapping("/me")
-    public ResponseEntity editMyInfo(HttpServletRequest request, @RequestBody MemberReq memberReq) {
-        UUID memberId = (UUID) request.getAttribute("memberId");
-        MemberRes result = memberService.editMember(memberId, memberReq);
+    public ResponseEntity editMyInfo(@AuthenticationPrincipal AuthMember authMember,
+                                     @RequestBody MemberReq memberReq) {
+        MemberRes result = memberService.editMember(authMember.getMember().getMemberId(), memberReq);
         return ResponseEntity.ok(result);
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping("/me")
+    public ResponseEntity signout(HttpServletRequest request) {
+        UUID memberId = (UUID) request.getAttribute("memberId");
+        memberService.withdrawMember(memberId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }
