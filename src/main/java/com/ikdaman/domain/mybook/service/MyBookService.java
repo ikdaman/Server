@@ -13,4 +13,6 @@ public interface MyBookService {
     MyBookSearchRes searchMyBooks(MyBookSearchReq request);
 
     InProgressBooksRes searchInProgressBooks();
+
+    MyBookDetailRes searchMyBookDetail(Integer mybookId);
 }

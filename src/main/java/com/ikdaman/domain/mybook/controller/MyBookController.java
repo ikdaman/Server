@@ -41,4 +41,10 @@ public class MyBookController {
         return myBookService.searchInProgressBooks();
     }
 
+    // 나의 책 정보 조회
+    @GetMapping("/{mybookId}")
+    public ResponseEntity<MyBookDetailRes> searchMyBookDetail(@PathVariable Integer mybookId) {
+        MyBookDetailRes res = myBookService.searchMyBookDetail(mybookId);
+        return ResponseEntity.ok(res);
+    }
 }

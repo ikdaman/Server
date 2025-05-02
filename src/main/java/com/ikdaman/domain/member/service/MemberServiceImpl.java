@@ -92,7 +92,7 @@ public class MemberServiceImpl implements MemberService {
         authService.logout(member.getMemberId());
 
         member.updateStatus(Member.Status.INACTIVE);
-        member.updateProviderId("");
+        member.updateProviderId(null);
         memberRepository.save(member);
     }
 }

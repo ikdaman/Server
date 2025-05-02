@@ -2,8 +2,10 @@ package com.ikdaman.domain.mybook.service;
 
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.repository.MemberRepository;
+import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.book.entity.Author;
 import com.ikdaman.domain.book.entity.Book;
+import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.mybook.entity.MyBook;
 import com.ikdaman.domain.book.entity.Writer;
 import com.ikdaman.domain.mybook.model.*;
@@ -23,6 +25,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.ikdaman.global.exception.ErrorCode.NOT_FOUND_BOOK;
+import static com.ikdaman.global.util.BookProgress.calculateProgress;
+
 /**
  * 나의 책 서비스 구현체
  */
@@ -34,7 +39,7 @@ public class MyBookServiceImpl implements MyBookService {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
     private final WriterRepository writerRepository;
-    private final MemberRepository memberRepository;
+    private final BookLogRepository bookLogRepository;
 
     @Override
     @Transactional
@@ -160,9 +165,47 @@ public class MyBookServiceImpl implements MyBookService {
                 .build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public MyBookDetailRes searchMyBookDetail(Integer mybookId) {
+        MyBook myBook = myBookRepository.findById(Long.valueOf(mybookId))
+                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+        Book book = myBook.getBook();
+
+        // 작가열 생성
+        List<Author> authors = book.getAuthor();
+        String authorNames = authors.stream()
+                .map(a -> a.getWriter().getWriterName())
+                .collect(Collectors.joining(", "));
+
+        // 첫인상 추가
+        String impression = bookLogRepository.findFirstByMyBookAndBooklogType(myBook, "IMPRESSION")
+                .map(BookLog::getContent)
+                .orElse(null);
+
+        // 책 정보 추가
+        MyBookDetailRes.BookInfo bookInfo = MyBookDetailRes.BookInfo.builder()
+                .title(book.getTitle())
+                .author(authorNames)
+                .coverImage(book.getCoverImage())
+                .publisher(book.getPublisher())
+                .totalPage(book.getPage())
+                .build();
+
+        // 나의책 정보 추가
+        return MyBookDetailRes.builder()
+                .bookInfo(bookInfo)
+                .mybookId(String.valueOf(myBook.getMybookId()))
+                .startDate(myBook.getCreatedAt().toString())
+                .nowPage(myBook.getNowPage())
+                .progress(calculateProgress(myBook.getNowPage(), book.getPage()))
+                .impression(impression)
+                .build();
+    }
+
     public void deleteMyBook(Integer id) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(id))
-                .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_BOOK));
+                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
 
         myBook.updateToInactive();
         myBookRepository.save(myBook);
