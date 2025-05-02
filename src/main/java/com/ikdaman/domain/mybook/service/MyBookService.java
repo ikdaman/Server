@@ -9,4 +9,5 @@ import com.ikdaman.domain.mybook.model.MyBookRes;
 public interface MyBookService {
     MyBookRes addMyBook(MyBookReq dto);
     // MyBookRes addMyBook(MyBookReq dto, String memberId);
+    void deleteMyBook(Integer mybookId);
 }
