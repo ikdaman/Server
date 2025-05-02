@@ -42,4 +42,9 @@ public class BookLogServiceImpl implements BookLogService {
         // Save the updated entity
         return myBookRepository.save(bookLog);
     }
+
+    @Override
+    public BookLog deleteBookLog(Long myBookId, Long bookLogId, BookLogReq request) {
+        return null;
+    }
 }

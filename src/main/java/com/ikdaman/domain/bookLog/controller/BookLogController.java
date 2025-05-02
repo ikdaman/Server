@@ -28,4 +28,14 @@ public class BookLogController {
         bookLogService.updateBookLog(myBookId, bookLogId, request);
         return ResponseEntity.status(205).build();
     }
+
+    @DeleteMapping("/{booklog_id}")
+    public ResponseEntity<?> deleteBooklog(
+            @PathVariable("mybook_id") Long myBookId,
+            @PathVariable("booklog_id") Long bookLogId,
+            @RequestBody BookLogReq request) {
+
+        bookLogService.deleteBookLog(myBookId, bookLogId, request);
+        return ResponseEntity.status(205).build();
+    }
 }

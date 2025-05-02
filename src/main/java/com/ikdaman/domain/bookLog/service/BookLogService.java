@@ -7,4 +7,6 @@ public interface BookLogService {
     BookLog addBookLog(BookLogReq request);
 
     BookLog updateBookLog(Long myBookId, Long bookLogId, BookLogReq request);
+
+    BookLog deleteBookLog(Long myBookId, Long bookLogId, BookLogReq request);
 }
