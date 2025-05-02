@@ -1,5 +1,6 @@
 package com.ikdaman.global.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import java.sql.SQLException;
 import org.springframework.http.HttpStatus;
@@ -8,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.ikdaman.global.exception.ErrorCode.DATABASE_ERROR;
-import static com.ikdaman.global.exception.ErrorCode.INTERNAL_SERVER_ERROR;
-import static com.ikdaman.global.exception.ErrorCode.NULL_POINTER_EXCEPTION;
+import static com.ikdaman.global.exception.ErrorCode.*;
 
 /**
  * 전역 예외 처리 핸들러 클래스
@@ -72,6 +71,24 @@ public class GlobalExceptionHandler {
                 .message(DATABASE_ERROR.getMessage())
                 .build();
         return new ResponseEntity<>(errorRes, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Validate 관련 예외(ConstraintViolationException) 처리 핸들러
+     *
+     * @param ex ConstraintViolationException
+     * @return 에러 응답(ResponseEntity<ErrorDto>)
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorRes> handleException(ConstraintViolationException ex) {
+        log.error(ex.getMessage(), ex);
+        ErrorRes errorRes = ErrorRes.builder()
+                .status(BAD_REQUEST_BY_VALIDATION.getStatus())
+                .code(String.valueOf(BAD_REQUEST_BY_VALIDATION.getCode()))
+                .message(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(errorRes, HttpStatus.BAD_REQUEST);
     }
 
     /**
