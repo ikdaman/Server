@@ -8,6 +8,7 @@ import com.ikdaman.global.auth.client.ClientKakao;
 import com.ikdaman.global.auth.token.AuthToken;
 import com.ikdaman.global.auth.token.AuthTokenProvider;
 import com.ikdaman.global.exception.BaseException;
+import com.ikdaman.global.util.RandomNickname;
 import com.ikdaman.global.util.RedisService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,13 @@ import static com.ikdaman.global.exception.ErrorCode.INVALID_SOCIAL_ACCESS_TOKEN
 
 @Service("kakao")
 @RequiredArgsConstructor
-public class KakaoAuthService implements SocialLoginService {
+public class KakaoAuthService implements OAuthService {
 
     private final ClientKakao clientKakao;
     private final AuthTokenProvider authTokenProvider;
     private final MemberRepository memberRepository;
     private final RedisService redisService;
+    private final RandomNickname randomNickname;
 
     @Value("${auth.refresh-token-validity}")
     private long refreshExpiry; // RefreshToken 만료일
@@ -41,8 +43,7 @@ public class KakaoAuthService implements SocialLoginService {
         // 3. 기존 회원 조회
         Member member = memberRepository.findBySocialTypeAndProviderId(Member.SocialType.KAKAO, checkProviderId)
                 .orElseGet(() -> {
-                    // TODO: 랜덤 닉네임 생성
-                    String nickname = "user_" + checkProviderId;
+                    String nickname = randomNickname.generate();
 
                     // 유저 정보 저장
                     Member newMember = Member.builder()
