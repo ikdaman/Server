@@ -4,6 +4,7 @@ import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.model.MemberReq;
 import com.ikdaman.domain.member.model.MemberRes;
 import com.ikdaman.domain.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -56,17 +57,17 @@ public class MemberController {
     }
 
     // 내 정보 조회
-    // TODO: Access Token 처리 방안에 따른 유저 확인 절차 추가
     @GetMapping("/me")
-    public ResponseEntity findMyInfo(@RequestHeader(name = "Authorization") UUID memberId) {
+    public ResponseEntity findMyInfo(HttpServletRequest request) {
+        UUID memberId = (UUID) request.getAttribute("memberId");
         MemberRes result = memberService.getMember(memberId);
         return ResponseEntity.ok(result);
     }
 
     // 내 정보 수정
-    // TODO: Access Token 처리 방안에 따른 유저 확인 절차 추가
     @PutMapping("/me")
-    public ResponseEntity editMyInfo(@RequestHeader(name = "Authorization") UUID memberId, @RequestBody MemberReq memberReq) {
+    public ResponseEntity editMyInfo(HttpServletRequest request, @RequestBody MemberReq memberReq) {
+        UUID memberId = (UUID) request.getAttribute("memberId");
         MemberRes result = memberService.editMember(memberId, memberReq);
         return ResponseEntity.ok(result);
     }
