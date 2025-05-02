@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class JwtHeaderUtil {
 
     private final static String HEADER_AUTHORIZATION = "Authorization";
-    private final static String TOKEN_PREFIX = " ";
+    private final static String TOKEN_PREFIX = "Bearer ";
 
     public static String getAccessToken(HttpServletRequest request) {
 

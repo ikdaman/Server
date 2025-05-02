@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -22,7 +23,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<String> NO_CHECK_URLS = List.of(
             "/auth/login",
-            "/auth/reissue"
+            "/auth/reissue",
+            // TODO: 전역 통과 삭제
+            "/"
     );
 
     @Override
@@ -42,11 +45,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) { // JWT 토큰 존재하는지 확인
             String tokenStr = JwtHeaderUtil.getAccessToken(request); // Bearer로 시작하는 값에서 Bearer를 제거한 accessToken(여기선 appToken) 반환
 
-            AuthToken token = tokenProvider.createUserAppToken(tokenStr); //**
+            AuthToken token = tokenProvider.convertAuthToken(tokenStr); // String to AuthToken
 
             if (token.validate()) { // token이 유효한지 확인
                 Authentication authentication = tokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication); // token에 존재하는 authentication 정보 삽입
+
+                // subject (UUID) 추출 후 request에 저장
+                String memberId = token.getTokenClaims().getSubject();
+                request.setAttribute("memberId", UUID.fromString(memberId));
             }
 
             filterChain.doFilter(request, response);

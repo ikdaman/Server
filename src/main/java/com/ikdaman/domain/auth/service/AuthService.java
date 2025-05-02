@@ -1,6 +1,6 @@
 package com.ikdaman.domain.auth.service;
 
-import com.ikdaman.global.auth.payload.Tokens;
+import com.ikdaman.global.auth.model.Tokens;
 import com.ikdaman.global.auth.token.AuthToken;
 import com.ikdaman.global.auth.token.AuthTokenProvider;
 import com.ikdaman.global.exception.BaseException;
@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 import static com.ikdaman.global.exception.ErrorCode.INVALID_REFRESH_TOKEN;
 
@@ -51,5 +53,10 @@ public class AuthService {
         redisService.setValuesWithTimeout(memberId, newRefreshToken.getToken(), refreshExpiry);
 
         return tokens;
+    }
+
+    @Transactional
+    public void logout(UUID memberId) {
+        redisService.deleteValues(String.valueOf(memberId));
     }
 }
