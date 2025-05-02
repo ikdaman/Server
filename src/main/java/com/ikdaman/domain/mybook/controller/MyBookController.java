@@ -22,7 +22,7 @@ public class MyBookController {
             // @RequestHeader("nickname") String nickname // 임시 인증 방식
     ) {
         MyBookRes myBookRes = myBookService.addMyBook(dto);
-        return ResponseEntity.ok(myBookRes);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{mybook_id}")
