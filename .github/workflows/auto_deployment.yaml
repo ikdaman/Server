@@ -22,8 +22,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    # pr의 결과가 merged인 경우만 jobs를 실행
-    if: github.event.pull_request.merged == true
+    # pr의 결과가 merged인 경우, 혹은 수동 트리거인 경우만 job 실행
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
 
     steps:
     # ssh로 EC2 접속
