@@ -43,7 +43,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         first_ssh: |
           ${{ secrets.AUTHORIZATION }}
-          fuser -k {{ secrets.APPLIATION_PORT}}/tcp && cd ${{ secrets.PROJECT_PATH }}
+          fuser -k {{ secrets.APPLIATION_PORT }}/tcp && cd ${{ secrets.PROJECT_PATH }}
           git fetch && git pull
           git submodule update --remote --merge
           cd ./server-private/src/* ./src/
