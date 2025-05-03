@@ -38,7 +38,7 @@ jobs:
           lsof -t -i:${{ secrets.APPLICATION_PORT }} | xargs -r kill && cd ${{ secrets.PROJECT_PATH }}
           git fetch && git pull
           git submodule update --remote --merge
-          cp ./server-private/src/* ./src/
+          cp -r -f ./server-private/src/* ./src/
           ./gradlew clean build -x test
           rm nohup.out
           nohup java -jar ${{ secrets.APPLICATION_PATH }} &
