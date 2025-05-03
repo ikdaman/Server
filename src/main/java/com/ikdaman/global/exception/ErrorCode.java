@@ -43,7 +43,8 @@ public enum ErrorCode {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND.value(), 4040201, "존재하지 않는 유저입니다."),
 
     // MyBook(03)
-    NOT_FOUND_BOOK(HttpStatus.NOT_FOUND.value(), 4040301, "나의 책이 존재하지 않습니다."),
+    NOT_FOUND_BOOK(HttpStatus.NOT_FOUND.value(), 4040301, "해당하는 책의 정보가 존재하지 않습니다."),
+    NOT_FOUND_AUTHOR(HttpStatus.NOT_FOUND.value(), 4040301, "해당하는 작가의 정보가 존재하지 않습니다."),
 
     // Notice(04)
 

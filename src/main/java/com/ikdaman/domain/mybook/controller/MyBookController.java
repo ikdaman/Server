@@ -24,6 +24,13 @@ public class MyBookController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/{mybook_id}/impression")
+    public ResponseEntity<Void> createImpression(@PathVariable("mybook_id") Integer myBookId,
+                                                 @RequestBody ImpressionReq dto) {
+        myBookService.addImpression(myBookId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @DeleteMapping("/{mybook_id}")
     public ResponseEntity<Void> deleteMyBook(@PathVariable Integer mybook_id) {
         myBookService.deleteMyBook(mybook_id);
