@@ -39,8 +39,8 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
 
     @Query("""
     SELECT m FROM MyBook m
-    JOIN m.book b
-    JOIN m.bookLogs bl
+    LEFT JOIN m.book b
+    LEFT JOIN m.bookLogs bl
     WHERE m.memberId = :memberId
         AND bl.booklogType = 'IMPRESSION'
         AND m.isReading = true
