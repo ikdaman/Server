@@ -42,3 +42,5 @@ jobs:
           ./gradlew clean build -x test
           rm -f nohup.out
           nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 &
+          sleep 5
+          exit 0
