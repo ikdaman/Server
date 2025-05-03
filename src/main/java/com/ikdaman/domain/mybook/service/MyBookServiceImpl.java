@@ -3,10 +3,13 @@ package com.ikdaman.domain.mybook.service;
 import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.bookLog.model.BookLogType;
 import com.ikdaman.domain.bookLog.repository.BookLogRepository;
+import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.repository.MemberRepository;
+import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.book.entity.Author;
 import com.ikdaman.domain.book.entity.Book;
+import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.mybook.entity.MyBook;
 import com.ikdaman.domain.book.entity.Writer;
 import com.ikdaman.domain.mybook.model.*;
@@ -18,6 +21,8 @@ import com.ikdaman.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +31,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.ikdaman.global.exception.ErrorCode.*;
+import static com.ikdaman.global.util.BookProgress.calculateProgress;
 
 /**
  * 나의 책 서비스 구현체
@@ -196,6 +202,64 @@ public class MyBookServiceImpl implements MyBookService {
         return InProgressBooksRes.builder()
                 .books(bookDtos)
                 .build();
+    }
+
+    // 나의 책 정보 조회
+    @Override
+    @Transactional(readOnly = true)
+    public MyBookDetailRes getMyBookDetail(Long mybookId) {
+        MyBook myBook = myBookRepository.findById(mybookId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+        Book book = myBook.getBook();
+
+        // 작가열 생성
+        List<Author> authors = book.getAuthor();
+        String authorNames = authors.stream()
+                .map(a -> a.getWriter().getWriterName())
+                .collect(Collectors.joining(", "));
+
+        // 첫인상 추가
+        String impression = bookLogRepository.findFirstByMyBookAndBooklogType(myBook, "IMPRESSION")
+                .map(BookLog::getContent)
+                .orElse(null);
+
+        // 책 정보 추가
+        MyBookDetailRes.BookInfo bookInfo = MyBookDetailRes.BookInfo.builder()
+                .title(book.getTitle())
+                .author(authorNames)
+                .coverImage(book.getCoverImage())
+                .publisher(book.getPublisher())
+                .totalPage(book.getPage())
+                .build();
+
+        // 나의책 정보 추가
+        return MyBookDetailRes.builder()
+                .bookInfo(bookInfo)
+                .mybookId(String.valueOf(myBook.getMybookId()))
+                .startDate(myBook.getCreatedAt().toString())
+                .nowPage(myBook.getNowPage())
+                .progress(calculateProgress(myBook.getNowPage(), book.getPage()))
+                .impression(impression)
+                .build();
+    }
+
+    // 나의 책 기록 조회
+    @Override
+    @Transactional(readOnly = true)
+    public BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<BookLog> resultPage = bookLogRepository.findByMyBook_MybookId(mybookId, pageable);
+
+        List<BookLogListRes.BookLogDTO> booklogs = resultPage.getContent().stream()
+                .map(log -> new BookLogListRes.BookLogDTO(
+                        log.getBooklogId(),
+                        log.getCreatedAt().toString(),
+                        log.getPage(),
+                        log.getContent(),
+                        log.getBooklogType()
+                )).toList();
+
+        return new BookLogListRes(booklogs, resultPage.hasNext());
     }
 
     public void deleteMyBook(Integer id) {

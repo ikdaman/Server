@@ -49,7 +49,7 @@ public class Member extends BaseTime {
     @Column(name = "social_type", nullable = false)
     private SocialType socialType;
 
-    @Column(name = "provider_id", nullable = false, unique = true)
+    @Column(name = "provider_id", unique = true)
     private String providerId;
 
     @Enumerated(EnumType.STRING)

@@ -1,5 +1,6 @@
 package com.ikdaman.domain.mybook.controller;
 
+import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.mybook.model.*;
 import com.ikdaman.domain.mybook.service.MyBookService;
 import lombok.RequiredArgsConstructor;
@@ -48,4 +49,20 @@ public class MyBookController {
         return myBookService.searchInProgressBooks();
     }
 
+    // 나의 책 정보 조회
+    @GetMapping("/{mybookId}")
+    public ResponseEntity<MyBookDetailRes> getMyBookDetail(@PathVariable Long mybookId) {
+        MyBookDetailRes res = myBookService.getMyBookDetail(mybookId);
+        return ResponseEntity.ok(res);
+    }
+
+    // 나의 책 기록 조회
+    @GetMapping("/{mybookId}/booklog")
+    public ResponseEntity<BookLogListRes> getMyBookLogs(
+            @PathVariable("mybookId") Long mybookId,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "limit", required = false, defaultValue = "9") Integer limit
+    ) {
+        return ResponseEntity.ok(myBookService.getMyBookLogs(mybookId, page, limit));
+    }
 }
