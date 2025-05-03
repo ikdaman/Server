@@ -41,8 +41,6 @@ jobs:
           cp -r -f ./server-private/src/* ./src/
           ./gradlew clean build -x test
           rm -f nohup.out
-          nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 &
-          disown
-          sleep 5
+          nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 & sleep 5
           ps -ef | grep java
           echo "Deployment completed successfully"
