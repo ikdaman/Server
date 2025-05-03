@@ -41,4 +41,4 @@ jobs:
           cp -r -f ./server-private/src/* ./src/
           ./gradlew clean build -x test
           rm -f nohup.out
-          nohup java -jar ${{ secrets.APPLICATION_PATH }} & < /dev/null & disown
+          nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 &
