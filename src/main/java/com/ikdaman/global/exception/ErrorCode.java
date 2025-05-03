@@ -44,7 +44,7 @@ public enum ErrorCode {
 
     // MyBook(03)
     NOT_FOUND_BOOK(HttpStatus.NOT_FOUND.value(), 4040301, "해당하는 책의 정보가 존재하지 않습니다."),
-    NOT_FOUND_AUTHOR(HttpStatus.NOT_FOUND.value(), 4040301, "해당하는 작가의 정보가 존재하지 않습니다."),
+    NOT_FOUND_AUTHOR(HttpStatus.NOT_FOUND.value(), 4040302, "해당하는 작가의 정보가 존재하지 않습니다."),
     EMPTY_IMPRESSION(HttpStatus.BAD_REQUEST.value(), 4040303, "첫인상을 입력해주세요."),
 
     // Notice(04)
