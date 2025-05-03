@@ -112,6 +112,10 @@ public class MyBookServiceImpl implements MyBookService {
 
         String writerName = author.getWriter().getWriterName();
 
+        if(dto.getImpression().isEmpty()) {
+            throw new BaseException(EMPTY_IMPRESSION);
+        }
+
         BookLog bookLog = BookLog.builder()
                 .myBook(myBook)
                 .page(0)
