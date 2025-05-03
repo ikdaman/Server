@@ -99,6 +99,7 @@ public class MyBookServiceImpl implements MyBookService {
     }
 
     @Override
+    @Transactional
     public MyBookRes addImpression(Integer myBookId, ImpressionReq dto) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(myBookId))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
@@ -266,6 +267,8 @@ public class MyBookServiceImpl implements MyBookService {
         return new BookLogListRes(booklogs, resultPage.hasNext());
     }
 
+    @Override
+    @Transactional
     public void deleteMyBook(Integer id) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(id))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
