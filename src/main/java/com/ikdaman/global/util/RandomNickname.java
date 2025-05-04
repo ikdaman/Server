@@ -2,12 +2,9 @@ package com.ikdaman.global.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.text.MessageFormat;
-import java.util.Random;
 
-// TODO: 랜덤 닉네임 생성. PM님에게 전달 받은 양식으로 작성
-// TODO: 닉네임 중복검사
+// 닉네임 중복검사 -> 가입이 이루어지는 Service 단에서 검사하는 편이 의존성을 줄일 수 있음 (추가적인 Repository를 선언할 필요 없음)
 @Component
 @RequiredArgsConstructor
 public class RandomNickname {
@@ -15,31 +12,45 @@ public class RandomNickname {
     private static final int MAX_NICKNAME_NUMBER = 999;
     private static final int MIN_NICKNAME_NUMBER = 1;
 
+    private static int ADJ_INDEX = 0;
+    private static int N_INDEX = 0;
+
     // 형용사 배열
     private final String[] ADJECTIVES = {
-            "행복한", "똑똑한", "즐거운", "강한", "빠른", "재치있는", "충성스러운", "멋진", "훌륭한", "즐거운", "아름다운", "기쁜", "사랑스러운", "행복한", "환상적인", "놀라운", "훌륭한", "매력적인", "긍정적인", "빛나는", "희망찬", "용감한", "따뜻한", "신나는", "친절한", "든든한", "감동적인", "뛰어난", "성실한", "창의적인", "자랑스러운", "유쾌한"
+            "책을 좋아하는", "책에 진심인", "책방을 좋아하는", "책 냄새 좋아하는", "독서하는",
+            "책장 넘기는", "깊은 독서하는", "따뜻한", "느긋한", "강한",
+            "말랑한", "단단한", "조용한", "여유있는", "깊은",
+            "유쾌한", "감성적인", "책 읽는", "몰입하는", "끈기있는",
+            "고요한", "사색적인", "숨겨진", "보고 싶은", "재미있는",
+            "용기의", "꿈꾸는", "건강한", "행복한", "고마운"
     };
 
     // 명사 배열
     private final String[] NOUNS = {
-            "사자", "호랑이", "독수리", "상어", "판다", "여우", "늑대", "용", "곰", "매", "강아지", "고양이", "토끼", "햄스터", "앵무새", "거북이", "고슴도치", "물고기", "말", "돌고래", "펭귄", "코알라", "기린", "수달", "코끼리"
+            "독서인", "독자", "책친구", "독서가", "독서광",
+            "학습가", "독서왕", "책러버", "북러버", "독서부자",
+            "리더", "책선생님", "책대장", "사색가", "친구",
+            "이웃", "어른", "사람", "감자", "고구마",
+            "배추", "당근", "양파", "버섯", "브로콜리",
+            "옥수수", "토마토", "양상추", "도토리"
     };
-
-    private final Random RANDOM = new Random();
 
     /**
      * 랜덤 닉네임을 생성하는 메소드
      */
     public String generate() {
         // 랜덤 형용사
-        String adjective = ADJECTIVES[RANDOM.nextInt(ADJECTIVES.length)];
+        String adjective = ADJECTIVES[ADJ_INDEX];
+        // 랜덤 명사
+        String noun = NOUNS[N_INDEX];
         // 랜덤 숫자
         int randomInt = (int) (Math.random() * (MAX_NICKNAME_NUMBER - MIN_NICKNAME_NUMBER) + MIN_NICKNAME_NUMBER);
-        // 랜덤 명사
-        String noun = NOUNS[RANDOM.nextInt(NOUNS.length)];
 
-        // 생성한 닉네임 반환 (Ex. 놀라운 469번째 호랑이)
-        return MessageFormat.format("{0} {1}번째 {2}", adjective, randomInt, noun);
+        ADJ_INDEX = (ADJ_INDEX + 1 ) % ADJECTIVES.length;
+        N_INDEX = (N_INDEX + 1 ) % NOUNS.length;
+
+        // 생성한 닉네임 반환 (Ex. 책을 좋아하는 독서인 27)
+        return MessageFormat.format("{0} {1} {2}", adjective, noun, randomInt);
     }
-
 }
+
