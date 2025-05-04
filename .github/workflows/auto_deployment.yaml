@@ -36,10 +36,17 @@ jobs:
         first_ssh: |
           ${{ secrets.AUTHORIZATION }}
           lsof -t -i:${{ secrets.APPLICATION_PORT }} | xargs -r kill && cd ${{ secrets.PROJECT_PATH }} || true
+          echo "프로세스 종료"
           git fetch && git pull
+          echo "git pull"
           git submodule update --remote --merge
+          echo "submodule update"
           cp -r -f ./server-private/src/* ./src/
+          echo "submodule copy"
           ./gradlew clean build -x test
+          echo "build"
           rm -f nohup.out
+          echo "remove nohup.out"
           { nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 & }
+          echo "running server"
           sleep 5 && exit 0
