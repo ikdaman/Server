@@ -43,7 +43,9 @@ public enum ErrorCode {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND.value(), 4040201, "존재하지 않는 유저입니다."),
 
     // MyBook(03)
-    NOT_FOUND_BOOK(HttpStatus.NOT_FOUND.value(), 4040301, "나의 책이 존재하지 않습니다."),
+    NOT_FOUND_BOOK(HttpStatus.NOT_FOUND.value(), 4040301, "해당하는 책의 정보가 존재하지 않습니다."),
+    NOT_FOUND_AUTHOR(HttpStatus.NOT_FOUND.value(), 4040302, "해당하는 작가의 정보가 존재하지 않습니다."),
+    EMPTY_IMPRESSION(HttpStatus.BAD_REQUEST.value(), 4040303, "첫인상을 입력해주세요."),
 
     // Notice(04)
 
@@ -56,6 +58,7 @@ public enum ErrorCode {
     CONFLICT_NICKNAME(HttpStatus.CONFLICT.value(), 4090201, "사용중인 닉네임입니다."),
     // MyBook(03)
     NOT_FOUND_MY_BOOK(HttpStatus.NOT_FOUND.value(), 4040301,"해당 MyBook을 찾을 수 없습니다."),
+    MY_BOOK_ALREADY_EXISTS(HttpStatus.CONFLICT.value(), 4090302, "이미 책장에 추가된 책입니다."),
 
     // Notice(04)
 

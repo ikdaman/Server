@@ -1,5 +1,8 @@
 package com.ikdaman.domain.mybook.service;
 
+import com.ikdaman.domain.bookLog.entity.BookLog;
+import com.ikdaman.domain.bookLog.model.BookLogType;
+import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.repository.MemberRepository;
@@ -15,7 +18,6 @@ import com.ikdaman.domain.book.repository.BookRepository;
 import com.ikdaman.domain.mybook.repository.MyBookRepository;
 import com.ikdaman.domain.book.repository.WriterRepository;
 import com.ikdaman.global.exception.BaseException;
-import com.ikdaman.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.ikdaman.global.exception.ErrorCode.NOT_FOUND_BOOK;
+import static com.ikdaman.global.exception.ErrorCode.*;
 import static com.ikdaman.global.util.BookProgress.calculateProgress;
 
 /**
@@ -43,10 +45,13 @@ public class MyBookServiceImpl implements MyBookService {
     private final BookRepository bookRepository;
     private final WriterRepository writerRepository;
     private final BookLogRepository bookLogRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     @Transactional
     public MyBookRes addMyBook(MyBookReq dto) {
+//        UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
+
         Writer writer = writerRepository.findByWriterName(dto.getWriter())
                 .orElseGet(() -> writerRepository.save(
                         Writer.builder()
@@ -77,8 +82,13 @@ public class MyBookServiceImpl implements MyBookService {
 //        Member member = memberRepository.findByNickname(nickname)
 //                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
+//        if(bookRepository.existsMyBookByMemberIdAndBook(memberId, book)) {
+//            throw new BaseException(MY_BOOK_ALREADY_EXISTS);
+//        }
+
         MyBook myBook = MyBook.builder()
 //                .memberId(member.getMemberId())
+//                .memberId(memberId)
                 .book(book)
                 .nowPage(0)
                 .isReading(true)
@@ -86,12 +96,61 @@ public class MyBookServiceImpl implements MyBookService {
 
         myBookRepository.save(myBook);
 
+        if(!dto.getImpression().isEmpty()) {
+            BookLog bookLog = BookLog.builder()
+                    .myBook(myBook)
+                    .page(0)
+                    .content(dto.getImpression())
+                    .booklogType(BookLogType.IMPRESSION.name())
+                    .build();
+
+            bookLogRepository.save(bookLog);
+        }
+
         return MyBookRes.builder()
                 .title(dto.getTitle())
                 .writer(dto.getWriter())
-                .page(dto.getPage())
+                .progressRate(0)
                 .impression(dto.getImpression())
                 .createdAt(dto.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public MyBookRes addImpression(Integer myBookId, ImpressionReq dto) {
+        MyBook myBook = myBookRepository.findById(Long.valueOf(myBookId))
+                .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
+
+        Book book = bookRepository.findById(Long.valueOf(myBook.getBook().getBookId()))
+                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+
+        // Author를 통해 writer_name 조회
+        Author author = authorRepository.findByBook(book)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_AUTHOR));
+
+        String writerName = author.getWriter().getWriterName();
+
+        if(dto.getImpression().isEmpty()) {
+            throw new BaseException(EMPTY_IMPRESSION);
+        }
+
+        BookLog bookLog = BookLog.builder()
+                .myBook(myBook)
+                .page(0)
+                .content(dto.getImpression())
+                .booklogType(BookLogType.IMPRESSION.name())
+                .build();
+
+        bookLogRepository.save(bookLog);
+
+        return MyBookRes.builder()
+                .mybookId(myBookId)
+                .title(book.getTitle())
+                .writer(writerName)
+                .progressRate(calculateProgress(myBook.getNowPage(), book.getPage()))
+                .impression(dto.getImpression())
+                .createdAt(String.valueOf(myBook.getCreatedAt()))
                 .build();
     }
 
@@ -226,9 +285,11 @@ public class MyBookServiceImpl implements MyBookService {
         return new BookLogListRes(booklogs, resultPage.hasNext());
     }
 
+    @Override
+    @Transactional
     public void deleteMyBook(Integer id) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(id))
-                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+                .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
 
         myBook.updateToInactive();
         myBookRepository.save(myBook);
