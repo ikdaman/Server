@@ -1,5 +1,6 @@
 package com.ikdaman.domain.mybook.model;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -23,7 +24,7 @@ public class MyBookReq {
     private String isbn;
     private int page;
     private String coverImage;
-    @Size(max=50)
+    @Size(min = 1, max = 500)
     private String impression;
     private String createdAt;
 
