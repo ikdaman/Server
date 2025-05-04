@@ -16,22 +16,14 @@ on:
         - info
         - warning
         - debug
-      tags:
-        description: 'Test scenario tags'
-        required: false
-        type: boolean
-      environment:
-        description: 'Environment to run tests against'
-        type: environment
-        required: true
 
 
 # ssh로 접속하여 새로운 버전 배포
 jobs:
   release:
     runs-on: ubuntu-latest
-    # pr의 결과가 merged인 경우만 jobs를 실행
-    if: github.event.pull_request.merged == true
+    # pr의 결과가 merged인 경우, 혹은 수동 트리거인 경우만 job 실행
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
 
     steps:
     # ssh로 EC2 접속
@@ -43,10 +35,13 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         first_ssh: |
           ${{ secrets.AUTHORIZATION }}
-          fuser -k {{ secrets.APPLIATION_PORT}}/tcp && cd ${{ secrets.PROJECT_PATH }}
+          lsof -t -i:${{ secrets.APPLICATION_PORT }} | xargs -r kill && cd ${{ secrets.PROJECT_PATH }}
           git fetch && git pull
           git submodule update --remote --merge
-          cd ./server-private/src/* ./src/
+          cp -r -f ./server-private/src/* ./src/
           ./gradlew clean build -x test
-          rm nohup.out
-          nohup java -jar {{ secrets.APPLICATION_PATH }} &
+          rm -f nohup.out
+          nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 & \
+          sleep 5
+          ps -ef | grep java
+          echo "Deployment completed successfully"
