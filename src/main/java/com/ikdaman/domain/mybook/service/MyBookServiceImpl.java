@@ -92,7 +92,7 @@ public class MyBookServiceImpl implements MyBookService {
         return MyBookRes.builder()
                 .title(dto.getTitle())
                 .writer(dto.getWriter())
-                .progressRate("0")
+                .progressRate(0)
                 .impression(dto.getImpression())
                 .createdAt(dto.getCreatedAt())
                 .build();
@@ -130,7 +130,7 @@ public class MyBookServiceImpl implements MyBookService {
                 .mybookId(myBookId)
                 .title(book.getTitle())
                 .writer(writerName)
-                .progressRate(String.format("%.2f", (double) myBook.getNowPage() / book.getPage() * 100))
+                .progressRate(calculateProgress(myBook.getNowPage(), book.getPage()))
                 .impression(dto.getImpression())
                 .createdAt(String.valueOf(myBook.getCreatedAt()))
                 .build();

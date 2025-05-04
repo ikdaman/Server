@@ -11,12 +11,12 @@ public class MyBookRes {
     private int mybookId;
     private String title;
     private String writer;
-    private String progressRate;
+    private int progressRate;
     private String impression;
     private String createdAt;
 
     @Builder
-    public MyBookRes(int mybookId, String title, String writer, String progressRate, String impression, String createdAt) {
+    public MyBookRes(int mybookId, String title, String writer, int progressRate, String impression, String createdAt) {
         this.mybookId = mybookId;
         this.title = title;
         this.writer = writer;
