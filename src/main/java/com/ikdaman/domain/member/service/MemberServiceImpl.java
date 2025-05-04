@@ -45,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public Boolean isAvailableNickname(String nickname) {
-        return !memberRepository.existsByNickname(nickname);
+        return !memberRepository.existsByNicknameAndStatus(nickname, Member.Status.ACTIVE);
     }
 
     @Override
