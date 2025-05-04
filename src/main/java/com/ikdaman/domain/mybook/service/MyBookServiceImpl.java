@@ -89,6 +89,17 @@ public class MyBookServiceImpl implements MyBookService {
 
         myBookRepository.save(myBook);
 
+        if(!dto.getImpression().isEmpty()) {
+            BookLog bookLog = BookLog.builder()
+                    .myBook(myBook)
+                    .page(0)
+                    .content(dto.getImpression())
+                    .booklogType(BookLogType.IMPRESSION.name())
+                    .build();
+
+            bookLogRepository.save(bookLog);
+        }
+
         return MyBookRes.builder()
                 .title(dto.getTitle())
                 .writer(dto.getWriter())
