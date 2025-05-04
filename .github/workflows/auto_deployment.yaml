@@ -35,11 +35,11 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         first_ssh: |
           ${{ secrets.AUTHORIZATION }}
-          lsof -t -i:${{ secrets.APPLICATION_PORT }} | xargs -r kill && cd ${{ secrets.PROJECT_PATH }}
+          lsof -t -i:${{ secrets.APPLICATION_PORT }} | xargs -r kill && cd ${{ secrets.PROJECT_PATH }} || true
           git fetch && git pull
           git submodule update --remote --merge
           cp -r -f ./server-private/src/* ./src/
           ./gradlew clean build -x test
           rm -f nohup.out
-          nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 &;
+          { nohup java -jar ${{ secrets.APPLICATION_PATH }} > nohup.out 2>&1 & }
           sleep 5 && exit 0
