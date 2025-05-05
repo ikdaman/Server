@@ -50,6 +50,8 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     @Transactional
     public MyBookRes addMyBook(MyBookReq dto) {
+//        UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
+
         Writer writer = writerRepository.findByWriterName(dto.getWriter())
                 .orElseGet(() -> writerRepository.save(
                         Writer.builder()
@@ -80,8 +82,13 @@ public class MyBookServiceImpl implements MyBookService {
 //        Member member = memberRepository.findByNickname(nickname)
 //                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
+//        if(bookRepository.existsMyBookByMemberIdAndBook(memberId, book)) {
+//            throw new BaseException(MY_BOOK_ALREADY_EXISTS);
+//        }
+
         MyBook myBook = MyBook.builder()
 //                .memberId(member.getMemberId())
+//                .memberId(memberId)
                 .book(book)
                 .nowPage(0)
                 .isReading(true)
@@ -89,10 +96,21 @@ public class MyBookServiceImpl implements MyBookService {
 
         myBookRepository.save(myBook);
 
+        if(!dto.getImpression().isEmpty()) {
+            BookLog bookLog = BookLog.builder()
+                    .myBook(myBook)
+                    .page(0)
+                    .content(dto.getImpression())
+                    .booklogType(BookLogType.IMPRESSION.name())
+                    .build();
+
+            bookLogRepository.save(bookLog);
+        }
+
         return MyBookRes.builder()
                 .title(dto.getTitle())
                 .writer(dto.getWriter())
-                .progressRate("0")
+                .progressRate(0)
                 .impression(dto.getImpression())
                 .createdAt(dto.getCreatedAt())
                 .build();
@@ -130,7 +148,7 @@ public class MyBookServiceImpl implements MyBookService {
                 .mybookId(myBookId)
                 .title(book.getTitle())
                 .writer(writerName)
-                .progressRate(String.format("%.2f", (double) myBook.getNowPage() / book.getPage() * 100))
+                .progressRate(calculateProgress(myBook.getNowPage(), book.getPage()))
                 .impression(dto.getImpression())
                 .createdAt(String.valueOf(myBook.getCreatedAt()))
                 .build();

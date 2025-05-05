@@ -24,8 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> NO_CHECK_URLS = List.of(
             "/auth/login",
             "/auth/reissue",
-            // TODO: 전역 통과 삭제
-            "/"
+            "/members/check"
     );
 
     @Override
