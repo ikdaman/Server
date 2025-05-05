@@ -4,6 +4,7 @@ import com.ikdaman.domain.auth.model.AuthReq;
 import com.ikdaman.domain.auth.model.AuthRes;
 import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.repository.MemberRepository;
+import com.ikdaman.domain.member.service.MemberService;
 import com.ikdaman.global.auth.client.ClientKakao;
 import com.ikdaman.global.auth.token.AuthToken;
 import com.ikdaman.global.auth.token.AuthTokenProvider;
@@ -23,6 +24,7 @@ public class KakaoAuthService implements OAuthService {
 
     private final ClientKakao clientKakao;
     private final AuthTokenProvider authTokenProvider;
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final RedisService redisService;
     private final RandomNickname randomNickname;
@@ -43,7 +45,10 @@ public class KakaoAuthService implements OAuthService {
         // 3. 기존 회원 조회
         Member member = memberRepository.findBySocialTypeAndProviderId(Member.SocialType.KAKAO, checkProviderId)
                 .orElseGet(() -> {
-                    String nickname = randomNickname.generate();
+                    String nickname;
+                    do {
+                        nickname = randomNickname.generate();
+                    } while (!memberService.isAvailableNickname(nickname)); // 닉네임 중복되면 다시 생성
 
                     // 유저 정보 저장
                     Member newMember = Member.builder()
