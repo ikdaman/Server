@@ -34,7 +34,7 @@ public class Member extends BaseTime {
     private UUID memberId;
 
     // TODO: NOT NULL, RANDOM GENERATE
-    @Column(length = 20, nullable = true, unique = true)
+    @Column(length = 20)
     @Size(min=1, max=20)
     private String nickname;
 
