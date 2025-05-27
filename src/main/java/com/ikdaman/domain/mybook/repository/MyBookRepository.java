@@ -36,6 +36,47 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             Pageable pageable
     );
 
+    @Query(value = """
+        SELECT m FROM MyBook m
+        LEFT JOIN m.book b
+        LEFT JOIN b.author a
+        LEFT JOIN a.writer w
+        WHERE 
+        (
+            :status IS NULL OR 
+            (:status = 'completed' AND m.isReading = false) OR 
+            (:status = 'in-progress' AND m.isReading = true)
+        )
+        AND (
+            :keyword is null OR
+            b.title LIKE %:keyword% OR 
+            w.writerName LIKE %:keyword%
+        )
+    """,
+    countQuery = """
+        SELECT COUNT(m) FROM MyBook m
+        LEFT JOIN m.book b
+        LEFT JOIN b.author a
+        LEFT JOIN a.writer w
+        WHERE 
+        (
+            :status IS NULL OR 
+            (:status = 'completed' AND m.isReading = false) OR 
+            (:status = 'in-progress' AND m.isReading = true)
+        )
+        AND (
+            :keyword IS NULL OR
+            b.title LIKE %:keyword% OR 
+            w.writerName LIKE %:keyword%
+        )
+    """
+    )
+    Page<MyBook> searchMyBooksWithoutMemberId(
+            @Param("status") String status,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
+
 
     @Query("""
     SELECT m FROM MyBook m
