@@ -39,7 +39,17 @@ public class MyBookController {
     }
 
     @GetMapping()
-    public MyBookSearchRes searchMyBooks(@ModelAttribute MyBookSearchReq request) {
+    public MyBookSearchRes searchMyBooks(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "9") Integer limit
+    ) {
+        MyBookSearchReq request = new MyBookSearchReq();
+        request.setStatus(status);
+        request.setKeyword(keyword);
+        request.setPage(page);
+        request.setLimit(limit);
         return myBookService.searchMyBooks(request);
     }
 
