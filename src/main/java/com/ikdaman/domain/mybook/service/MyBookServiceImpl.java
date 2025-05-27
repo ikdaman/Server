@@ -157,20 +157,18 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     public MyBookSearchRes searchMyBooks(MyBookSearchReq request) {
         int page = request.getPage() - 1; // PageRequest는 0부터 시작
-        int limit = request.getLimit() + 1;
+        int limit = request.getLimit();
 
-        PageRequest pageRequest = PageRequest.of(page, limit);
+        Pageable pageable = PageRequest.of(page, limit);
         //UUID memberId = request.getMemberId();
         UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
 
         String keyword = request.getKeyword();
-        String safeKeyword = keyword == null ? null : "%" + keyword + "%";
-
-        Page<MyBook> resultPage = myBookRepository.searchMyBooks(
-                memberId,
-                safeKeyword,
+        System.out.println("keyword: " + keyword);
+        Page<MyBook> resultPage = myBookRepository.searchMyBooksWithoutMemberId(
+                request.getStatus(),
                 keyword,
-                pageRequest
+                pageable
         );
 
         List<MyBookSearchRes.BookDto> books = resultPage.getContent().stream()
