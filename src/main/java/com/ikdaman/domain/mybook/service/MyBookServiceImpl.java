@@ -161,7 +161,7 @@ public class MyBookServiceImpl implements MyBookService {
 
         Pageable pageable = PageRequest.of(page, limit);
         //UUID memberId = request.getMemberId();
-        UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
+        //UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
 
         String keyword = request.getKeyword();
         System.out.println("keyword: " + keyword);
@@ -197,9 +197,9 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     public InProgressBooksRes searchInProgressBooks() {
         //UUID memberId = request.getMemberId();
-        UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
+        //UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
 
-        List<MyBook> myBooks = myBookRepository.findByMemberIdAndIsReading(memberId, true);
+        List<MyBook> myBooks = myBookRepository.findByMemberIdAndIsReadingWithoutMemberId();
 
         List<InProgressBooksRes.BookDto> bookDtos = myBooks.stream()
                 .map(myBook -> {
