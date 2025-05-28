@@ -88,4 +88,25 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         AND m.status = 'ACTIVE'""")
     List<MyBook> findByMemberIdAndIsReading(UUID memberId, boolean isReading);
 
+    @Query(value = """
+        SELECT m FROM MyBook m
+        LEFT JOIN m.book b
+        LEFT JOIN m.bookLogs bl
+        WHERE 
+            bl.booklogType = 'IMPRESSION'
+            AND m.isReading = true
+            AND m.status = 'ACTIVE'
+        """,
+        countQuery = """
+            SELECT COUNT(m) FROM MyBook m
+            LEFT JOIN m.book b
+            LEFT JOIN m.bookLogs bl
+            WHERE 
+                bl.booklogType = 'IMPRESSION'
+                AND m.isReading = true
+                AND m.status = 'ACTIVE'
+        """
+    )
+    List<MyBook> findByMemberIdAndIsReadingWithoutMemberId();
+
 }
