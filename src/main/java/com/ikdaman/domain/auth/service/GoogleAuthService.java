@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import static com.ikdaman.global.exception.ErrorCode.GOOGLE_SERVER_ERROR;
 import static com.ikdaman.global.exception.ErrorCode.INVALID_SOCIAL_ACCESS_TOKEN;
 
 @Service("google")
@@ -34,10 +35,15 @@ public class GoogleAuthService implements OAuthService {
 
     @Override
     @Transactional
-    public AuthRes login(AuthReq dto, String socialAccessToken) {
+    public AuthRes login(AuthReq dto, String socialToken) {
 
         // 1. 소셜 accessToken을 통해 Google userId 가져오기
-        String checkProviderId = clientGoogle.getUserData(socialAccessToken);
+        final String checkProviderId;
+        try {
+            checkProviderId = clientGoogle.getUserData(socialToken);
+        } catch (Exception e) {
+            throw new BaseException(GOOGLE_SERVER_ERROR);
+        }
 
         // 2. 요청으로 들어온 providerId와 비교해서 검증
         if (!dto.getProviderId().equals(checkProviderId)) throw new BaseException(INVALID_SOCIAL_ACCESS_TOKEN);
