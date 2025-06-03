@@ -24,7 +24,7 @@ public class MyBookReq {
     private String isbn;
     private int page;
     private String coverImage;
-    @Size(min = 1, max = 500)
+    @Size(max = 500)
     private String impression;
     private String createdAt;
 
