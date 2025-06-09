@@ -59,6 +59,10 @@ public class MyBook extends BaseTime {
         this.status = Status.INACTIVE;
     }
 
+    public void updateNowPage(int page) {
+        this.nowPage = page;
+    }
+
     @Builder
     public MyBook(int mybookId, UUID memberId, Book book, int nowPage, Boolean isReading, MyBook.Status status, List<BookLog> bookLogs) {
         this.mybookId = mybookId;

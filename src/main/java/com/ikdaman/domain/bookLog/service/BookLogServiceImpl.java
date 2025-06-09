@@ -35,7 +35,12 @@ public class BookLogServiceImpl implements BookLogService {
                 .booklogType(BookLogType.THINK.name())
                 .build();
 
-        return bookLogRepository.save(bookLog);
+        BookLog insertedBookLog = bookLogRepository.save(bookLog);
+
+        myBook.updateNowPage(request.getPage());
+        myBookRepository.save(myBook);
+
+        return insertedBookLog;
     }
 
     @Override
@@ -69,7 +74,12 @@ public class BookLogServiceImpl implements BookLogService {
                 .booklogType(BookLogType.REVIEW.name())
                 .build();
 
-        return bookLogRepository.save(bookLog);
+        BookLog insertedBookLog = bookLogRepository.save(bookLog);
+        
+        myBook.updateNowPage(myBook.getBook().getPage());
+        myBookRepository.save(myBook);
+
+        return insertedBookLog;
     }
 
     @Override
