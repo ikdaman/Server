@@ -213,7 +213,7 @@ public class MyBookServiceImpl implements MyBookService {
                             .title(book.getTitle())
                             .author(authorNames)
                             .coverImage(book.getCoverImage())
-                            .progress(String.format("%.2f", (double) myBook.getNowPage() / book.getPage() * 100) + "%")
+                            .progress(String.format("%d", myBook.getNowPage() * 100 / book.getPage()))
                             .firstImpression(myBook.getBookLogs().isEmpty() ? null : myBook.getBookLogs().get(0).getContent())
                             .recentEdit(String.valueOf(myBook.getUpdatedAt()))
                             .build();
