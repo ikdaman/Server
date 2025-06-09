@@ -83,7 +83,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
     LEFT JOIN m.book b
     LEFT JOIN m.bookLogs bl
     WHERE m.memberId = :memberId
-        AND bl.booklogType = 'IMPRESSION'
+        AND (bl.booklogType = 'IMPRESSION' OR bl.booklogType IS NULL)
         AND m.isReading = true
         AND m.status = 'ACTIVE'""")
     List<MyBook> findByMemberIdAndIsReading(UUID memberId, boolean isReading);
@@ -93,7 +93,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         LEFT JOIN m.book b
         LEFT JOIN m.bookLogs bl
         WHERE 
-            bl.booklogType = 'IMPRESSION'
+            (bl.booklogType = 'IMPRESSION' OR bl.booklogType IS NULL)
             AND m.isReading = true
             AND m.status = 'ACTIVE'
         """,
@@ -102,7 +102,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             LEFT JOIN m.book b
             LEFT JOIN m.bookLogs bl
             WHERE 
-                bl.booklogType = 'IMPRESSION'
+                (bl.booklogType = 'IMPRESSION' OR bl.booklogType IS NULL)
                 AND m.isReading = true
                 AND m.status = 'ACTIVE'
         """
