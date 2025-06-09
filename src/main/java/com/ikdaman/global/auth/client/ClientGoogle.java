@@ -64,7 +64,7 @@ public class ClientGoogle {
      * @param idToken Google idToken
      * @return 사용자 Google 계정의 providerId
      */
-    public String getUserData(String idToken) throws Exception {
+    public String getUserDataByIdToken(String idToken) throws Exception {
 
         // GoogleIdTokenVerifier를 생성: Google의 공개키로 idToken의 서명을 검증
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(

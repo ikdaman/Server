@@ -29,12 +29,12 @@ public class AuthController {
     /**
      * 소셜 로그인
      * @param dto
-     * @param socialToken
+     * @param socialToken access-token: 카카오, 네이버 | id-token: 구글, 애플
      * @return
      */
     @PostMapping("/login")
     public ResponseEntity<AuthRes> socialLogin(@RequestBody AuthReq dto,
-                                               @RequestHeader("social-access-token") String socialToken) {
+                                               @RequestHeader("social-token") String socialToken) {
 
         String provider = dto.getProvider().toLowerCase();
         OAuthService oAuthService = socialLoginServices.get(provider);

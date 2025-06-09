@@ -37,7 +37,11 @@ public enum ErrorCode {
     INVALID_ACCESS_TOKEN(HttpStatus.NOT_FOUND.value(), 4040102,"Access Token이 유효하지 않습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.NOT_FOUND.value(), 4040103,"Refresh Token이 유효하지 않습니다."),
     INVALID_SOCIAL_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040104,"유효하지 않은 소셜 로그인 제공업체입니다."),
-    NOT_MATCH_TOKEN_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040101,"Social Access Token과 Provider Id가 매칭되지 않습니다."),
+    NOT_MATCH_TOKEN_PROVIDER(HttpStatus.NOT_FOUND.value(), 4040105,"Social Access Token과 Provider Id가 매칭되지 않습니다."),
+    INVALID_ACCESS_TOKEN_SIGNATURE(HttpStatus.UNAUTHORIZED.value(), 4010106, "Access Token의 서명이 유효하지 않습니다."),
+    INVALID_ACCESS_TOKEN_FORMAT(HttpStatus.UNAUTHORIZED.value(), 4010107, "Access Token의 형식이 유효하지 않습니다."),
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED.value(), 4010108, "Access Token이 만료되었습니다."),
+    UNSUPPORTED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED.value(), 4010109, "Access Token이 지원되지 않습니다."),
 
     // Member(02)
     NOT_FOUND_USER(HttpStatus.NOT_FOUND.value(), 4040201, "존재하지 않는 유저입니다."),
