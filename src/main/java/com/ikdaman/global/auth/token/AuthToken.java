@@ -1,6 +1,7 @@
 package com.ikdaman.global.auth.token;
 
 import com.ikdaman.global.auth.enumerate.RoleType;
+import com.ikdaman.global.exception.BaseException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.security.Key;
 import java.util.Date;
+
+import static com.ikdaman.global.exception.ErrorCode.EXPIRED_ACCESS_TOKEN;
+import static com.ikdaman.global.exception.ErrorCode.INVALID_ACCESS_TOKEN;
+import static com.ikdaman.global.exception.ErrorCode.INVALID_ACCESS_TOKEN_FORMAT;
+import static com.ikdaman.global.exception.ErrorCode.INVALID_ACCESS_TOKEN_SIGNATURE;
+import static com.ikdaman.global.exception.ErrorCode.UNSUPPORTED_ACCESS_TOKEN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,20 +55,18 @@ public class AuthToken {
                     .parseClaimsJws(token)
                     .getBody(); // token의 Body가 다음의 exception들로 인해 유효하지 않으면 각각의 로그를 콘솔에 출력
 
-            // TODO: Error 코드 세분화 필요
         } catch (SecurityException e) {
-            log.info("Invalid JWT signature.");
+            throw new BaseException(INVALID_ACCESS_TOKEN_SIGNATURE);
         } catch (MalformedJwtException e) {
             // 처음 로그인(/auth/kakao) 할 때, AccessToken(여기선 appToken) 없이 접근해도 token validate 체크
             // -> exception 터트리지 않고 catch로 잡아줌
-            log.info("Invalid JWT token.");
+            throw new BaseException(INVALID_ACCESS_TOKEN_FORMAT);
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
+            throw new BaseException(EXPIRED_ACCESS_TOKEN);
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
+            throw new BaseException(UNSUPPORTED_ACCESS_TOKEN);
         } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
+            throw new BaseException(INVALID_ACCESS_TOKEN);
         }
-        return null;
     }
 }
