@@ -110,6 +110,7 @@ public class MyBookServiceImpl implements MyBookService {
         return MyBookRes.builder()
                 .title(dto.getTitle())
                 .writer(dto.getWriter())
+                .itemId(dto.getItemId())
                 .progressRate(0)
                 .impression(dto.getImpression())
                 .createdAt(dto.getCreatedAt())
