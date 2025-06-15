@@ -199,7 +199,7 @@ public class MyBookServiceImpl implements MyBookService {
         //UUID memberId = request.getMemberId();
         //UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
 
-        List<MyBook> myBooks = myBookRepository.findByMemberIdAndIsReadingWithoutMemberId();
+        List<MyBook> myBooks = myBookRepository.findAllActiveReadingBooks();
 
         List<InProgressBooksRes.BookDto> bookDtos = myBooks.stream()
                 .map(myBook -> {
@@ -208,13 +208,19 @@ public class MyBookServiceImpl implements MyBookService {
                             .map(author -> author.getWriter().getWriterName())
                             .collect(Collectors.joining(", ")); // 여러 작가면 ,로 구분
 
+                    String firstImpression = myBook.getBookLogs().stream()
+                            .filter(bookLog -> bookLog.getBooklogType().equals("IMPRESSION"))
+                            .findFirst()
+                            .map(BookLog::getContent)
+                            .orElse(null);
+
                     return InProgressBooksRes.BookDto.builder()
                             .mybookId(myBook.getMybookId())
                             .title(book.getTitle())
                             .author(authorNames)
                             .coverImage(book.getCoverImage())
                             .progress(String.format("%d", myBook.getNowPage() * 100 / book.getPage()))
-                            .firstImpression(myBook.getBookLogs().isEmpty() ? null : myBook.getBookLogs().get(0).getContent())
+                            .firstImpression(firstImpression)
                             .recentEdit(String.valueOf(myBook.getUpdatedAt()))
                             .build();
                 })
