@@ -24,19 +24,21 @@ public class MyBookReq {
     private String isbn;
     private int page;
     private String coverImage;
+    private int itemId; // 알라딘 itemId
     @Size(max = 500)
     private String impression;
     private String createdAt;
 
     @Builder
     public MyBookReq(String title, String writer, String publisher, String isbn,
-                     int page, String coverImage, String impression, String createdAt) {
+                     int page, String coverImage, int itemId, String impression, String createdAt) {
         this.title = title;
         this.writer = writer;
         this.publisher = publisher;
         this.isbn = isbn;
         this.page = page;
         this.coverImage = coverImage;
+        this.itemId = itemId;
         this.impression = impression;
         this.createdAt = createdAt;
     }
