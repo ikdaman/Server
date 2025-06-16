@@ -23,5 +23,5 @@ public interface MyBookService {
 
     MyBookDetailRes getMyBookDetail(UUID memberId, Long mybookId);
 
-    BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit);
+    BookLogListRes getMyBookLogs(UUID memberId, Long mybookId, Integer page, Integer limit);
 }

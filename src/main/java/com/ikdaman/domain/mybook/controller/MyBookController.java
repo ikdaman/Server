@@ -72,10 +72,11 @@ public class MyBookController {
     // 나의 책 기록 조회
     @GetMapping("/{mybookId}/booklog")
     public ResponseEntity<BookLogListRes> getMyBookLogs(
+            @AuthenticationPrincipal AuthMember authMember,
             @PathVariable("mybookId") Long mybookId,
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false, defaultValue = "9") Integer limit
     ) {
-        return ResponseEntity.ok(myBookService.getMyBookLogs(mybookId, page, limit));
+        return ResponseEntity.ok(myBookService.getMyBookLogs(authMember.getMember().getMemberId(), mybookId, page, limit));
     }
 }

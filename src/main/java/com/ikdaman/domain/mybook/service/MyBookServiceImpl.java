@@ -233,13 +233,9 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     @Transactional(readOnly = true)
     public MyBookDetailRes getMyBookDetail(UUID memberId, Long mybookId) {
-        MyBook myBook = myBookRepository.findById(mybookId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
 
-        if (!myBook.getMemberId().equals(memberId)) {
-            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
-        }
-
+        // 책 주인 확인
+        MyBook myBook = getMyBookIfOwner(mybookId, memberId);
         Book book = myBook.getBook();
 
         // 작가열 생성
@@ -278,10 +274,16 @@ public class MyBookServiceImpl implements MyBookService {
     // 나의 책 기록 조회
     @Override
     @Transactional(readOnly = true)
-    public BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit) {
+    public BookLogListRes getMyBookLogs(UUID memberId, Long mybookId, Integer page, Integer limit) {
+
+        // 책 주인 확인
+        getMyBookIfOwner(mybookId, memberId);
+
+        // 페이지네이션
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<BookLog> resultPage = bookLogRepository.findByMyBook_MybookId(mybookId, pageable);
 
+        // 응답용 DTO 리스트 변환
         List<BookLogListRes.BookLogDTO> booklogs = resultPage.getContent().stream()
                 .map(log -> new BookLogListRes.BookLogDTO(
                         log.getBooklogId(),
@@ -302,5 +304,15 @@ public class MyBookServiceImpl implements MyBookService {
 
         myBook.updateToInactive();
         myBookRepository.save(myBook);
+    }
+
+    // 책 주인 확인
+    private MyBook getMyBookIfOwner(Long mybookId, UUID memberId) {
+        MyBook myBook = myBookRepository.findById(mybookId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+        if (!myBook.getMemberId().equals(memberId)) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
+        return myBook;
     }
 }
