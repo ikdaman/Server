@@ -4,12 +4,9 @@ import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.bookLog.model.BookLogType;
 import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.bookLog.model.BookLogListRes;
-import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.repository.MemberRepository;
-import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.book.entity.Author;
 import com.ikdaman.domain.book.entity.Book;
-import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.mybook.entity.MyBook;
 import com.ikdaman.domain.book.entity.Writer;
 import com.ikdaman.domain.mybook.model.*;
@@ -235,9 +232,10 @@ public class MyBookServiceImpl implements MyBookService {
     // 나의 책 정보 조회
     @Override
     @Transactional(readOnly = true)
-    public MyBookDetailRes getMyBookDetail(Long mybookId) {
-        MyBook myBook = myBookRepository.findById(mybookId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+    public MyBookDetailRes getMyBookDetail(UUID memberId, Long mybookId) {
+
+        // 책 주인 확인
+        MyBook myBook = getMyBookIfOwner(mybookId, memberId);
         Book book = myBook.getBook();
 
         // 작가열 생성
@@ -246,13 +244,15 @@ public class MyBookServiceImpl implements MyBookService {
                 .map(a -> a.getWriter().getWriterName())
                 .collect(Collectors.joining(", "));
 
-        // 첫인상 추가
+        // 첫인상 조회
         String impression = bookLogRepository.findFirstByMyBookAndBooklogType(myBook, "IMPRESSION")
                 .map(BookLog::getContent)
                 .orElse(null);
 
-        // 책 정보 추가
+        // 책 정보 객체 생성
+        // TODO: itemId 알라딘 item id로 변경해서 전달 필요(isbn -> aladinItemId)
         MyBookDetailRes.BookInfo bookInfo = MyBookDetailRes.BookInfo.builder()
+                .itemId(book.getIsbn())
                 .title(book.getTitle())
                 .author(authorNames)
                 .coverImage(book.getCoverImage())
@@ -260,7 +260,7 @@ public class MyBookServiceImpl implements MyBookService {
                 .totalPage(book.getPage())
                 .build();
 
-        // 나의책 정보 추가
+        // 나의책 정보 객체 생성
         return MyBookDetailRes.builder()
                 .bookInfo(bookInfo)
                 .mybookId(String.valueOf(myBook.getMybookId()))
@@ -274,10 +274,16 @@ public class MyBookServiceImpl implements MyBookService {
     // 나의 책 기록 조회
     @Override
     @Transactional(readOnly = true)
-    public BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit) {
+    public BookLogListRes getMyBookLogs(UUID memberId, Long mybookId, Integer page, Integer limit) {
+
+        // 책 주인 확인
+        getMyBookIfOwner(mybookId, memberId);
+
+        // 페이지네이션
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<BookLog> resultPage = bookLogRepository.findByMyBook_MybookId(mybookId, pageable);
 
+        // 응답용 DTO 리스트 변환
         List<BookLogListRes.BookLogDTO> booklogs = resultPage.getContent().stream()
                 .map(log -> new BookLogListRes.BookLogDTO(
                         log.getBooklogId(),
@@ -298,5 +304,15 @@ public class MyBookServiceImpl implements MyBookService {
 
         myBook.updateToInactive();
         myBookRepository.save(myBook);
+    }
+
+    // 책 주인 확인
+    private MyBook getMyBookIfOwner(Long mybookId, UUID memberId) {
+        MyBook myBook = myBookRepository.findById(mybookId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+        if (!myBook.getMemberId().equals(memberId)) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
+        return myBook;
     }
 }

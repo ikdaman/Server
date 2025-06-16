@@ -3,6 +3,8 @@ package com.ikdaman.domain.mybook.service;
 import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.mybook.model.*;
 
+import java.util.UUID;
+
 /**
  * 나의 책 서비스
  */
@@ -19,7 +21,7 @@ public interface MyBookService {
 
     InProgressBooksRes searchInProgressBooks();
 
-    MyBookDetailRes getMyBookDetail(Long mybookId);
+    MyBookDetailRes getMyBookDetail(UUID memberId, Long mybookId);
 
-    BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit);
+    BookLogListRes getMyBookLogs(UUID memberId, Long mybookId, Integer page, Integer limit);
 }
