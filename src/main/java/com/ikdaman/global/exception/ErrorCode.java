@@ -28,6 +28,18 @@ public enum ErrorCode {
     // Notice(04)
 
 
+    /**
+     * 403 Forbidden
+     */
+    // Auth(01)
+
+    // Member(02)
+
+    // MyBook(03)
+    BOOK_NOT_OWNED_BY_MEMBER(HttpStatus.FORBIDDEN.value(), 4030301, "본인의 책이 아닙니다."),
+
+    // Notice(04)
+
 
     /**
      * 404 Not found

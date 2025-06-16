@@ -3,10 +3,12 @@ package com.ikdaman.domain.mybook.controller;
 import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.mybook.model.*;
 import com.ikdaman.domain.mybook.service.MyBookService;
+import com.ikdaman.global.auth.model.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -61,8 +63,9 @@ public class MyBookController {
 
     // 나의 책 정보 조회
     @GetMapping("/{mybookId}")
-    public ResponseEntity<MyBookDetailRes> getMyBookDetail(@PathVariable Long mybookId) {
-        MyBookDetailRes res = myBookService.getMyBookDetail(mybookId);
+    public ResponseEntity<MyBookDetailRes> getMyBookDetail(@AuthenticationPrincipal AuthMember authMember,
+                                                           @PathVariable Long mybookId) {
+        MyBookDetailRes res = myBookService.getMyBookDetail(authMember.getMember().getMemberId(), mybookId);
         return ResponseEntity.ok(res);
     }
 
