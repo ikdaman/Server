@@ -12,36 +12,12 @@ import java.util.UUID;
 
 public interface MyBookRepository extends JpaRepository<MyBook, Long> {
 
-    @Query("""
-        SELECT m FROM MyBook m
-        LEFT JOIN m.book b
-        LEFT JOIN b.author a
-        LEFT JOIN a.writer w
-        WHERE m.memberId = :memberId
-        AND (
-            :status IS NULL OR 
-            (:status = 'completed' AND m.isReading = false) OR 
-            (:status = 'in-progress' AND m.isReading = true)
-        )
-        AND (
-            :keyword IS NULL OR 
-            b.title LIKE :keyword OR 
-            w.writerName LIKE :keyword
-        )
-    """)
-    Page<MyBook> searchMyBooks(
-            @Param("memberId") UUID memberId,
-            @Param("status") String status,
-            @Param("keyword") String keyword,
-            Pageable pageable
-    );
-
     @Query(value = """
         SELECT m FROM MyBook m
         LEFT JOIN m.book b
         LEFT JOIN b.author a
         LEFT JOIN a.writer w
-        WHERE 
+        WHERE m.memberId = :memberId AND
         (
             :status IS NULL OR 
             (:status = 'completed' AND m.isReading = false) OR 
@@ -59,6 +35,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         LEFT JOIN b.author a
         LEFT JOIN a.writer w
         WHERE 
+        m.memberId = :memberId AND
         (
             :status IS NULL OR 
             (:status = 'completed' AND m.isReading = false) OR 
@@ -71,7 +48,8 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         )
     """
     )
-    Page<MyBook> searchMyBooksWithoutMemberId(
+    Page<MyBook> searchMyBooks(
+            @Param("memberId") UUID memberId,
             @Param("status") String status,
             @Param("keyword") String keyword,
             Pageable pageable
@@ -93,7 +71,8 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         LEFT JOIN m.book b
         LEFT JOIN m.bookLogs bl
         WHERE 
-            m.isReading = true
+            m.memberId = :memberId
+            AND m.isReading = true
             AND m.status = 'ACTIVE'
         """,
         countQuery = """
@@ -101,10 +80,11 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             LEFT JOIN m.book b
             LEFT JOIN m.bookLogs bl
             WHERE 
-                m.isReading = true
+                m.memberId = :memberId
+                AND m.isReading = true
                 AND m.status = 'ACTIVE'
         """
     )
-    List<MyBook> findAllActiveReadingBooks();
+    List<MyBook> findAllActiveReadingBooks(UUID memberId);
 
 }

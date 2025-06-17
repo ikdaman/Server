@@ -15,6 +15,8 @@ import com.ikdaman.domain.book.repository.BookRepository;
 import com.ikdaman.domain.mybook.repository.MyBookRepository;
 import com.ikdaman.domain.book.repository.WriterRepository;
 import com.ikdaman.global.exception.BaseException;
+import com.ikdaman.global.auth.model.AuthMember;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +36,7 @@ import static com.ikdaman.global.util.BookProgress.calculateProgress;
  * 나의 책 서비스 구현체
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MyBookServiceImpl implements MyBookService {
 
@@ -153,17 +156,17 @@ public class MyBookServiceImpl implements MyBookService {
     }
 
     @Override
-    public MyBookSearchRes searchMyBooks(MyBookSearchReq request) {
+    public MyBookSearchRes searchMyBooks(MyBookSearchReq request, AuthMember authMember) {
         int page = request.getPage() - 1; // PageRequest는 0부터 시작
         int limit = request.getLimit();
 
         Pageable pageable = PageRequest.of(page, limit);
-        //UUID memberId = request.getMemberId();
-        //UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
 
         String keyword = request.getKeyword();
-        System.out.println("keyword: " + keyword);
-        Page<MyBook> resultPage = myBookRepository.searchMyBooksWithoutMemberId(
+        log.info("keyword: {}", keyword);
+
+        Page<MyBook> resultPage = myBookRepository.searchMyBooks(
+                authMember.getMember().getMemberId(),
                 request.getStatus(),
                 keyword,
                 pageable
@@ -193,11 +196,10 @@ public class MyBookServiceImpl implements MyBookService {
     }
 
     @Override
-    public InProgressBooksRes searchInProgressBooks() {
-        //UUID memberId = request.getMemberId();
-        //UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
-
-        List<MyBook> myBooks = myBookRepository.findAllActiveReadingBooks();
+    public InProgressBooksRes searchInProgressBooks(AuthMember authMember) {
+        List<MyBook> myBooks = myBookRepository.findAllActiveReadingBooks(
+                authMember.getMember().getMemberId()
+        );
 
         List<InProgressBooksRes.BookDto> bookDtos = myBooks.stream()
                 .map(myBook -> {

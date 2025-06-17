@@ -2,6 +2,7 @@ package com.ikdaman.domain.mybook.service;
 
 import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.mybook.model.*;
+import com.ikdaman.global.auth.model.AuthMember;
 
 import java.util.UUID;
 
@@ -17,9 +18,9 @@ public interface MyBookService {
 
     void deleteMyBook(Integer mybookId);
 
-    MyBookSearchRes searchMyBooks(MyBookSearchReq request);
+    MyBookSearchRes searchMyBooks(MyBookSearchReq request, AuthMember authMember);
 
-    InProgressBooksRes searchInProgressBooks();
+    InProgressBooksRes searchInProgressBooks(AuthMember authMember);
 
     MyBookDetailRes getMyBookDetail(UUID memberId, Long mybookId);
 
