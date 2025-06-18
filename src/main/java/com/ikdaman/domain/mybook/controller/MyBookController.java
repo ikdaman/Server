@@ -5,6 +5,11 @@ import com.ikdaman.domain.mybook.model.*;
 import com.ikdaman.domain.mybook.service.MyBookService;
 import com.ikdaman.global.auth.model.AuthMember;
 import lombok.RequiredArgsConstructor;
+import com.ikdaman.global.auth.model.AuthMember;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,20 +50,23 @@ public class MyBookController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "9") Integer limit
+            @RequestParam(required = false, defaultValue = "9") Integer limit,
+            @AuthenticationPrincipal AuthMember authMember
     ) {
         MyBookSearchReq request = new MyBookSearchReq();
         request.setStatus(status);
         request.setKeyword(keyword);
         request.setPage(page);
         request.setLimit(limit);
-        return myBookService.searchMyBooks(request);
+        return myBookService.searchMyBooks(request, authMember);
     }
 
     // 독서중인 책 목록 조회
     @GetMapping("/in-progress")
-    public InProgressBooksRes searchInProgressBooks() {
-        return myBookService.searchInProgressBooks();
+    public InProgressBooksRes searchInProgressBooks(
+        @AuthenticationPrincipal AuthMember authMember
+    ) {
+        return myBookService.searchInProgressBooks(authMember);
     }
 
     // 나의 책 정보 조회
