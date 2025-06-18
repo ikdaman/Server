@@ -41,11 +41,14 @@ public class Book extends BaseTime {
     @Column(name = "category_id")
     private int categoryId;
 
+    @Column(name = "aladin_item_id")
+    private String aladinItemId;
+
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     private List<Author> author;
 
     @Builder
-    public Book(int bookId, String title, String publisher, String isbn, int page, String coverImage, int categoryId, List<Author> author) {
+    public Book(int bookId, String title, String publisher, String isbn, int page, String coverImage, int categoryId, String aladinItemId, List<Author> author) {
         this.bookId = bookId;
         this.title = title;
         this.publisher = publisher;
@@ -53,6 +56,7 @@ public class Book extends BaseTime {
         this.page = page;
         this.coverImage = coverImage;
         this.categoryId = categoryId;
+        this.aladinItemId = aladinItemId;
         this.author = author;
     }
 }

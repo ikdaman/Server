@@ -64,6 +64,7 @@ public class MyBookServiceImpl implements MyBookService {
                             .isbn(dto.getIsbn())
                             .page(dto.getPage())
                             .coverImage(dto.getCoverImage())
+                            .aladinItemId(String.valueOf(dto.getItemId()))
                             .build();
 
                     return bookRepository.save(newBook);
