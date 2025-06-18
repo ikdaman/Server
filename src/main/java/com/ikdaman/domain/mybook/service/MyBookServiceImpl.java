@@ -49,9 +49,7 @@ public class MyBookServiceImpl implements MyBookService {
 
     @Override
     @Transactional
-    public MyBookRes addMyBook(MyBookReq dto) {
-//        UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
-
+    public MyBookRes addMyBook(UUID memberId, MyBookReq dto) {
         Writer writer = writerRepository.findByWriterName(dto.getWriter())
                 .orElseGet(() -> writerRepository.save(
                         Writer.builder()
@@ -80,16 +78,13 @@ public class MyBookServiceImpl implements MyBookService {
                     .build());
         }
 
-//        Member member = memberRepository.findByNickname(nickname)
-//                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
-
-//        if(bookRepository.existsMyBookByMemberIdAndBook(memberId, book)) {
-//            throw new BaseException(MY_BOOK_ALREADY_EXISTS);
-//        }
+        // 한 사용자가 책장에 같은 책을 중복으로 저장할 수 없음
+        if(myBookRepository.existsMyBookByMemberIdAndBook(memberId, book)) {
+            throw new BaseException(MY_BOOK_ALREADY_EXISTS);
+        }
 
         MyBook myBook = MyBook.builder()
-//                .memberId(member.getMemberId())
-//                .memberId(memberId)
+                .memberId(memberId)
                 .book(book)
                 .nowPage(0)
                 .isReading(true)
@@ -120,9 +115,13 @@ public class MyBookServiceImpl implements MyBookService {
 
     @Override
     @Transactional
-    public MyBookRes addImpression(Integer myBookId, ImpressionReq dto) {
+    public MyBookRes addImpression(UUID memberId, Integer myBookId, ImpressionReq dto) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(myBookId))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
+
+        if (!myBook.getMemberId().equals(memberId)) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
 
         Book book = bookRepository.findById(Long.valueOf(myBook.getBook().getBookId()))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
@@ -301,9 +300,13 @@ public class MyBookServiceImpl implements MyBookService {
 
     @Override
     @Transactional
-    public void deleteMyBook(Integer id) {
+    public void deleteMyBook(UUID memberId, Integer id) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(id))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
+
+        if (!myBook.getMemberId().equals(memberId)) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
 
         myBook.updateToInactive();
         myBookRepository.save(myBook);

@@ -25,23 +25,26 @@ public class MyBookController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MyBookRes> addMyBook(
-            @RequestBody MyBookReq dto
-            // @RequestHeader("nickname") String nickname // 임시 인증 방식
+            @RequestBody MyBookReq dto,
+            @AuthenticationPrincipal AuthMember authMember
     ) {
-        MyBookRes myBookRes = myBookService.addMyBook(dto);
+        MyBookRes myBookRes = myBookService.addMyBook(authMember.getMember().getMemberId(), dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/{mybook_id}/impression")
     public ResponseEntity<Void> createImpression(@PathVariable("mybook_id") Integer myBookId,
-                                                 @RequestBody ImpressionReq dto) {
-        myBookService.addImpression(myBookId, dto);
+                                                 @RequestBody ImpressionReq dto,
+                                                 @AuthenticationPrincipal AuthMember authMember) {
+
+        myBookService.addImpression(authMember.getMember().getMemberId(), myBookId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{mybook_id}")
-    public ResponseEntity<Void> deleteMyBook(@PathVariable Integer mybook_id) {
-        myBookService.deleteMyBook(mybook_id);
+    public ResponseEntity<Void> deleteMyBook(@PathVariable Integer mybook_id,
+                                             @AuthenticationPrincipal AuthMember authMember) {
+        myBookService.deleteMyBook(authMember.getMember().getMemberId(), mybook_id);
         return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
     }
 

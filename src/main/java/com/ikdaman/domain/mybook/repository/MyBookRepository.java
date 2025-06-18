@@ -1,5 +1,6 @@
 package com.ikdaman.domain.mybook.repository;
 
+import com.ikdaman.domain.book.entity.Book;
 import com.ikdaman.domain.mybook.entity.MyBook;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
@@ -86,5 +87,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         """
     )
     List<MyBook> findAllActiveReadingBooks(UUID memberId);
+
+    boolean existsMyBookByMemberIdAndBook(UUID memberId, Book Book);
 
 }
