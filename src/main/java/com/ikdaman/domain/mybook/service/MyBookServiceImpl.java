@@ -4,12 +4,9 @@ import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.bookLog.model.BookLogType;
 import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.bookLog.model.BookLogListRes;
-import com.ikdaman.domain.member.entity.Member;
 import com.ikdaman.domain.member.repository.MemberRepository;
-import com.ikdaman.domain.bookLog.repository.BookLogRepository;
 import com.ikdaman.domain.book.entity.Author;
 import com.ikdaman.domain.book.entity.Book;
-import com.ikdaman.domain.bookLog.entity.BookLog;
 import com.ikdaman.domain.mybook.entity.MyBook;
 import com.ikdaman.domain.book.entity.Writer;
 import com.ikdaman.domain.mybook.model.*;
@@ -18,6 +15,8 @@ import com.ikdaman.domain.book.repository.BookRepository;
 import com.ikdaman.domain.mybook.repository.MyBookRepository;
 import com.ikdaman.domain.book.repository.WriterRepository;
 import com.ikdaman.global.exception.BaseException;
+import com.ikdaman.global.auth.model.AuthMember;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +36,7 @@ import static com.ikdaman.global.util.BookProgress.calculateProgress;
  * 나의 책 서비스 구현체
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MyBookServiceImpl implements MyBookService {
 
@@ -49,9 +49,7 @@ public class MyBookServiceImpl implements MyBookService {
 
     @Override
     @Transactional
-    public MyBookRes addMyBook(MyBookReq dto) {
-//        UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
-
+    public MyBookRes addMyBook(UUID memberId, MyBookReq dto) {
         Writer writer = writerRepository.findByWriterName(dto.getWriter())
                 .orElseGet(() -> writerRepository.save(
                         Writer.builder()
@@ -67,6 +65,7 @@ public class MyBookServiceImpl implements MyBookService {
                             .isbn(dto.getIsbn())
                             .page(dto.getPage())
                             .coverImage(dto.getCoverImage())
+                            .aladinItemId(String.valueOf(dto.getItemId()))
                             .build();
 
                     return bookRepository.save(newBook);
@@ -79,16 +78,13 @@ public class MyBookServiceImpl implements MyBookService {
                     .build());
         }
 
-//        Member member = memberRepository.findByNickname(nickname)
-//                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
-
-//        if(bookRepository.existsMyBookByMemberIdAndBook(memberId, book)) {
-//            throw new BaseException(MY_BOOK_ALREADY_EXISTS);
-//        }
+        // 한 사용자가 책장에 같은 책을 중복으로 저장할 수 없음
+        if(myBookRepository.existsMyBookByMemberIdAndBook(memberId, book)) {
+            throw new BaseException(MY_BOOK_ALREADY_EXISTS);
+        }
 
         MyBook myBook = MyBook.builder()
-//                .memberId(member.getMemberId())
-//                .memberId(memberId)
+                .memberId(memberId)
                 .book(book)
                 .nowPage(0)
                 .isReading(true)
@@ -119,9 +115,13 @@ public class MyBookServiceImpl implements MyBookService {
 
     @Override
     @Transactional
-    public MyBookRes addImpression(Integer myBookId, ImpressionReq dto) {
+    public MyBookRes addImpression(UUID memberId, Integer myBookId, ImpressionReq dto) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(myBookId))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
+
+        if (!myBook.getMemberId().equals(memberId)) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
 
         Book book = bookRepository.findById(Long.valueOf(myBook.getBook().getBookId()))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
@@ -156,17 +156,17 @@ public class MyBookServiceImpl implements MyBookService {
     }
 
     @Override
-    public MyBookSearchRes searchMyBooks(MyBookSearchReq request) {
+    public MyBookSearchRes searchMyBooks(MyBookSearchReq request, AuthMember authMember) {
         int page = request.getPage() - 1; // PageRequest는 0부터 시작
         int limit = request.getLimit();
 
         Pageable pageable = PageRequest.of(page, limit);
-        //UUID memberId = request.getMemberId();
-        //UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
 
         String keyword = request.getKeyword();
-        System.out.println("keyword: " + keyword);
-        Page<MyBook> resultPage = myBookRepository.searchMyBooksWithoutMemberId(
+        log.info("keyword: {}", keyword);
+
+        Page<MyBook> resultPage = myBookRepository.searchMyBooks(
+                authMember.getMember().getMemberId(),
                 request.getStatus(),
                 keyword,
                 pageable
@@ -196,11 +196,10 @@ public class MyBookServiceImpl implements MyBookService {
     }
 
     @Override
-    public InProgressBooksRes searchInProgressBooks() {
-        //UUID memberId = request.getMemberId();
-        //UUID memberId = UUID.fromString("d290f1ee-6c54-4b01-90e6-d701748f0851");
-
-        List<MyBook> myBooks = myBookRepository.findAllActiveReadingBooks();
+    public InProgressBooksRes searchInProgressBooks(AuthMember authMember) {
+        List<MyBook> myBooks = myBookRepository.findAllActiveReadingBooks(
+                authMember.getMember().getMemberId()
+        );
 
         List<InProgressBooksRes.BookDto> bookDtos = myBooks.stream()
                 .map(myBook -> {
@@ -235,9 +234,10 @@ public class MyBookServiceImpl implements MyBookService {
     // 나의 책 정보 조회
     @Override
     @Transactional(readOnly = true)
-    public MyBookDetailRes getMyBookDetail(Long mybookId) {
-        MyBook myBook = myBookRepository.findById(mybookId)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+    public MyBookDetailRes getMyBookDetail(UUID memberId, Long mybookId) {
+
+        // 책 주인 확인
+        MyBook myBook = getMyBookIfOwner(mybookId, memberId);
         Book book = myBook.getBook();
 
         // 작가열 생성
@@ -246,13 +246,15 @@ public class MyBookServiceImpl implements MyBookService {
                 .map(a -> a.getWriter().getWriterName())
                 .collect(Collectors.joining(", "));
 
-        // 첫인상 추가
+        // 첫인상 조회
         String impression = bookLogRepository.findFirstByMyBookAndBooklogType(myBook, "IMPRESSION")
                 .map(BookLog::getContent)
                 .orElse(null);
 
-        // 책 정보 추가
+        // 책 정보 객체 생성
+        // TODO: itemId 알라딘 item id로 변경해서 전달 필요(isbn -> aladinItemId)
         MyBookDetailRes.BookInfo bookInfo = MyBookDetailRes.BookInfo.builder()
+                .itemId(book.getIsbn())
                 .title(book.getTitle())
                 .author(authorNames)
                 .coverImage(book.getCoverImage())
@@ -260,7 +262,7 @@ public class MyBookServiceImpl implements MyBookService {
                 .totalPage(book.getPage())
                 .build();
 
-        // 나의책 정보 추가
+        // 나의책 정보 객체 생성
         return MyBookDetailRes.builder()
                 .bookInfo(bookInfo)
                 .mybookId(String.valueOf(myBook.getMybookId()))
@@ -274,10 +276,16 @@ public class MyBookServiceImpl implements MyBookService {
     // 나의 책 기록 조회
     @Override
     @Transactional(readOnly = true)
-    public BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit) {
+    public BookLogListRes getMyBookLogs(UUID memberId, Long mybookId, Integer page, Integer limit) {
+
+        // 책 주인 확인
+        getMyBookIfOwner(mybookId, memberId);
+
+        // 페이지네이션
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<BookLog> resultPage = bookLogRepository.findByMyBook_MybookId(mybookId, pageable);
 
+        // 응답용 DTO 리스트 변환
         List<BookLogListRes.BookLogDTO> booklogs = resultPage.getContent().stream()
                 .map(log -> new BookLogListRes.BookLogDTO(
                         log.getBooklogId(),
@@ -292,11 +300,25 @@ public class MyBookServiceImpl implements MyBookService {
 
     @Override
     @Transactional
-    public void deleteMyBook(Integer id) {
+    public void deleteMyBook(UUID memberId, Integer id) {
         MyBook myBook = myBookRepository.findById(Long.valueOf(id))
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
 
+        if (!myBook.getMemberId().equals(memberId)) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
+
         myBook.updateToInactive();
         myBookRepository.save(myBook);
+    }
+
+    // 책 주인 확인
+    private MyBook getMyBookIfOwner(Long mybookId, UUID memberId) {
+        MyBook myBook = myBookRepository.findById(mybookId)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_BOOK));
+        if (!myBook.getMemberId().equals(memberId)) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
+        return myBook;
     }
 }

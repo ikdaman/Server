@@ -22,6 +22,7 @@ public class MyBookDetailRes {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BookInfo {
+        private String itemId;
         private String title;
         private String author;
         private String coverImage;

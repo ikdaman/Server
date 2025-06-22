@@ -30,22 +30,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    // 회원 생성 테스트
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Member> createMember(@RequestBody MemberReq dto) {
-        Member member = memberService.createMember(dto);
-        System.out.println("aaaaaaaaa");
-        return ResponseEntity.ok(member);
-    }
-
-    // 회원 조회 테스트
-    @GetMapping("/{memberId}")
-    public ResponseEntity<Member> getMember(@PathVariable UUID memberId) {
-        Optional<Member> member = memberService.findMemberById(memberId);
-        return member.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     // 닉네임 중복 확인
     // TODO: 닉네임 형식에 대한 Validation (2025.05.01 기준 미정)
     @GetMapping("/check")

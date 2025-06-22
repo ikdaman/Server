@@ -2,24 +2,26 @@ package com.ikdaman.domain.mybook.service;
 
 import com.ikdaman.domain.bookLog.model.BookLogListRes;
 import com.ikdaman.domain.mybook.model.*;
+import com.ikdaman.global.auth.model.AuthMember;
+
+import java.util.UUID;
 
 /**
  * 나의 책 서비스
  */
 public interface MyBookService {
-    MyBookRes addMyBook(MyBookReq dto);
-    // MyBookRes addMyBook(MyBookReq dto, String memberId);
+    MyBookRes addMyBook(UUID memberId, MyBookReq dto);
 
     // 첫인상
-    MyBookRes addImpression(Integer myBookId, ImpressionReq dto);
+    MyBookRes addImpression(UUID memberId, Integer myBookId, ImpressionReq dto);
 
-    void deleteMyBook(Integer mybookId);
+    void deleteMyBook(UUID memberId, Integer mybookId);
 
-    MyBookSearchRes searchMyBooks(MyBookSearchReq request);
+    MyBookSearchRes searchMyBooks(MyBookSearchReq request, AuthMember authMember);
 
-    InProgressBooksRes searchInProgressBooks();
+    InProgressBooksRes searchInProgressBooks(AuthMember authMember);
 
-    MyBookDetailRes getMyBookDetail(Long mybookId);
+    MyBookDetailRes getMyBookDetail(UUID memberId, Long mybookId);
 
-    BookLogListRes getMyBookLogs(Long mybookId, Integer page, Integer limit);
+    BookLogListRes getMyBookLogs(UUID memberId, Long mybookId, Integer page, Integer limit);
 }
