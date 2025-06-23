@@ -252,9 +252,8 @@ public class MyBookServiceImpl implements MyBookService {
                 .orElse(null);
 
         // 책 정보 객체 생성
-        // TODO: itemId 알라딘 item id로 변경해서 전달 필요(isbn -> aladinItemId)
         MyBookDetailRes.BookInfo bookInfo = MyBookDetailRes.BookInfo.builder()
-                .itemId(book.getIsbn())
+                .itemId(book.getAladinItemId())
                 .title(book.getTitle())
                 .author(authorNames)
                 .coverImage(book.getCoverImage())
