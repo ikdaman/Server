@@ -55,6 +55,11 @@ dependencies {
 
 	// Goolge OAuth2
 	implementation 'com.google.api-client:google-api-client:2.8.0'
+
+	// jsch 라이브러리, for ssh tunneling
+	implementation 'com.github.mwiede:jsch:0.2.15'
+	// application.yml의 환경 변수를 class에서 사용하기 위한 라이브러리
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	
 	// Apache Commons Lang
 //	implementation 'org.apache.commons:commons-lang3:3.12.0'

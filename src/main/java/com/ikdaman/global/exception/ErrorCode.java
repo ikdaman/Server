@@ -64,6 +64,7 @@ public enum ErrorCode {
     EMPTY_IMPRESSION(HttpStatus.BAD_REQUEST.value(), 4040303, "첫인상을 입력해주세요."),
 
     // Notice(04)
+    NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), 4040301, "해당하는 공지사항이 존재하지 않습니다."),
 
     /**
      * 409 Conflict
