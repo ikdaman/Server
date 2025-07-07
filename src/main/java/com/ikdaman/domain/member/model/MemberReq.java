@@ -21,7 +21,6 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberReq {
 
-    @NotBlank
     @Size(min=2, max=15, message = "닉네임은 최소 2자, 최대 15자만 가능합니다.")
     @Pattern(regexp = "^[a-zA-Z0-9가-힣\\s]+$", message = "닉네임은 한글, 영어, 숫자, 공백만을 포함합니다.")
     private String nickname;
