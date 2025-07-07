@@ -68,13 +68,17 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_USER));
 
-        if(!memberReq.getNickname().equals(member.getNickname()) && !isAvailableNickname(memberReq.getNickname())) {
+        if(
+                memberReq.getNickname() != null
+                && !memberReq.getNickname().equals(member.getNickname())
+                && !isAvailableNickname(memberReq.getNickname())
+        ) {
             throw new BaseException(ErrorCode.CONFLICT_NICKNAME);
         }
 
-        member.updateNickname(memberReq.getNickname());
-        member.updateBirthdate(memberReq.getBirthdate());
-        member.updateGender(memberReq.getGender());
+        member.updateNickname(Optional.ofNullable(memberReq.getNickname()).orElse(member.getNickname()));
+        member.updateBirthdate(Optional.ofNullable(memberReq.getBirthdate()).orElse(member.getBirthdate()));
+        member.updateGender(Optional.ofNullable(memberReq.getGender()).orElse(member.getGender()));
 
         memberRepository.save(member);
 
