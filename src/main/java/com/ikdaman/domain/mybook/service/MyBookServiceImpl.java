@@ -186,6 +186,7 @@ public class MyBookServiceImpl implements MyBookService {
                             .title(book.getTitle())
                             .author(authorNames)
                             .coverImage(book.getCoverImage())
+                            .isCompleted(myBook.getNowPage() == book.getPage())
                             .build();
                 })
                 .toList();

@@ -28,6 +28,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             b.title LIKE %:keyword% OR 
             w.writerName LIKE %:keyword%
         )
+        ORDER BY m.createdAt DESC
     """,
     countQuery = """
         SELECT COUNT(m) FROM MyBook m
