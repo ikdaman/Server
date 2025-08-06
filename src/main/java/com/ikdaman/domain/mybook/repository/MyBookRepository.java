@@ -20,8 +20,8 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         WHERE m.memberId = :memberId AND
         (
             :status IS NULL OR 
-            (:status = 'completed' AND m.isReading = false) OR 
-            (:status = 'in-progress' AND m.isReading = true)
+            (:status = 'completed' AND m.isReading = true) OR 
+            (:status = 'in-progress' AND m.isReading = false)
         )
         AND (
             :keyword is null OR
@@ -39,8 +39,8 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         m.memberId = :memberId AND
         (
             :status IS NULL OR 
-            (:status = 'completed' AND m.isReading = false) OR 
-            (:status = 'in-progress' AND m.isReading = true)
+            (:status = 'completed' AND m.isReading = true) OR 
+            (:status = 'in-progress' AND m.isReading = false)
         )
         AND (
             :keyword IS NULL OR
