@@ -308,8 +308,9 @@ public class MyBookServiceImpl implements MyBookService {
             throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
         }
 
-        myBook.updateToInactive();
-        myBookRepository.save(myBook);
+        bookLogRepository.deleteByMyBook(myBook);
+
+        myBookRepository.delete(myBook);
     }
 
     // 책 주인 확인
