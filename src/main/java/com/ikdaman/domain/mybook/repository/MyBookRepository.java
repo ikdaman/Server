@@ -76,7 +76,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             m.memberId = :memberId
             AND m.isReading = true
             AND m.status = 'ACTIVE'
-        ORDER BY m.createdAt DESC
+        ORDER BY m.updatedAt DESC
         LIMIT :limit
         """
     )
