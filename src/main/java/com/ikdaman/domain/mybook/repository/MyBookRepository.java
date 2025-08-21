@@ -76,18 +76,11 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             m.memberId = :memberId
             AND m.isReading = true
             AND m.status = 'ACTIVE'
-        """,
-        countQuery = """
-            SELECT COUNT(m) FROM MyBook m
-            LEFT JOIN m.book b
-            LEFT JOIN m.bookLogs bl
-            WHERE 
-                m.memberId = :memberId
-                AND m.isReading = true
-                AND m.status = 'ACTIVE'
+        ORDER BY m.updatedAt DESC
+        LIMIT :limit
         """
     )
-    List<MyBook> findAllActiveReadingBooks(UUID memberId);
+    List<MyBook> findAllActiveReadingBooks(UUID memberId, Integer limit);
 
     boolean existsMyBookByMemberIdAndBook(UUID memberId, Book Book);
 

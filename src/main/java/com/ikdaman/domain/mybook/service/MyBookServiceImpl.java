@@ -47,6 +47,8 @@ public class MyBookServiceImpl implements MyBookService {
     private final BookLogRepository bookLogRepository;
     private final MemberRepository memberRepository;
 
+    private final int HOME_DEFAULT_LIMIT = 10;
+
     @Override
     @Transactional
     public MyBookRes addMyBook(UUID memberId, MyBookReq dto) {
@@ -199,7 +201,8 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     public InProgressBooksRes searchInProgressBooks(AuthMember authMember) {
         List<MyBook> myBooks = myBookRepository.findAllActiveReadingBooks(
-                authMember.getMember().getMemberId()
+                authMember.getMember().getMemberId(),
+                HOME_DEFAULT_LIMIT
         );
 
         List<InProgressBooksRes.BookDto> bookDtos = myBooks.stream()
