@@ -18,17 +18,19 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         LEFT JOIN m.book b
         LEFT JOIN b.author a
         LEFT JOIN a.writer w
-        WHERE m.memberId = :memberId AND
-        (
-            :status IS NULL OR 
-            (:status = 'completed' AND b.page = m.nowPage) OR 
-            (:status = 'in-progress' AND b.page != m.nowPage)
-        )
-        AND (
-            :keyword is null OR
-            b.title LIKE %:keyword% OR 
-            w.writerName LIKE %:keyword%
-        )
+        WHERE 
+            m.memberId = :memberId AND
+            m.status = 'ACTIVE' AND
+            (
+                :status IS NULL OR 
+                (:status = 'completed' AND b.page = m.nowPage) OR 
+                (:status = 'in-progress' AND b.page != m.nowPage)
+            )
+            AND (
+                :keyword is null OR
+                b.title LIKE %:keyword% OR 
+                w.writerName LIKE %:keyword%
+            )
         ORDER BY m.createdAt DESC
     """,
     countQuery = """
@@ -37,17 +39,18 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
         LEFT JOIN b.author a
         LEFT JOIN a.writer w
         WHERE 
-        m.memberId = :memberId AND
-        (
-            :status IS NULL OR 
-            (:status = 'completed' AND b.page = m.nowPage) OR 
-            (:status = 'in-progress' AND b.page != m.nowPage)
-        )
-        AND (
-            :keyword IS NULL OR
-            b.title LIKE %:keyword% OR 
-            w.writerName LIKE %:keyword%
-        )
+            m.memberId = :memberId AND
+            m.status = 'ACTIVE' AND
+            (
+                :status IS NULL OR 
+                (:status = 'completed' AND b.page = m.nowPage) OR 
+                (:status = 'in-progress' AND b.page != m.nowPage)
+            )
+            AND (
+                :keyword IS NULL OR
+                b.title LIKE %:keyword% OR 
+                w.writerName LIKE %:keyword%
+            )
     """
     )
     Page<MyBook> searchMyBooks(
