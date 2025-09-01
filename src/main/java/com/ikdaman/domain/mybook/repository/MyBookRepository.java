@@ -68,7 +68,8 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
     WHERE m.memberId = :memberId
         AND (bl.booklogType = 'IMPRESSION' OR bl.booklogType IS NULL)
         AND m.isReading = true
-        AND m.status = 'ACTIVE'""")
+        AND m.status = 'ACTIVE'
+        AND b.page != m.nowPage""")
     List<MyBook> findByMemberIdAndIsReading(UUID memberId, boolean isReading);
 
     @Query(value = """
@@ -79,6 +80,7 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             m.memberId = :memberId
             AND m.isReading = true
             AND m.status = 'ACTIVE'
+            AND b.page != m.nowPage
         ORDER BY m.updatedAt DESC
         LIMIT :limit
         """
